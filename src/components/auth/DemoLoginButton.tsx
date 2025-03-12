@@ -14,8 +14,8 @@ const DemoLoginButton = () => {
     setLoading(true);
     
     try {
-      // Use a real email format for the demo account
-      const demoEmail = "demouser@example.com";
+      // 実存するドメインを持つ有効なメールアドレス形式を使用
+      const demoEmail = "demo.user@gmail.com";
       const demoPassword = "demo12345";
       
       const { error } = await supabase.auth.signInWithPassword({
@@ -24,7 +24,7 @@ const DemoLoginButton = () => {
       });
       
       if (error) {
-        // If demo user doesn't exist, create it first
+        // デモユーザーが存在しない場合は作成
         if (error.message.includes("Invalid login credentials")) {
           const { error: signUpError } = await supabase.auth.signUp({
             email: demoEmail,
@@ -33,13 +33,13 @@ const DemoLoginButton = () => {
           
           if (signUpError) throw signUpError;
           
-          // Show a message that the demo account has been created
+          // デモアカウント作成のメッセージを表示
           toast({
             title: "デモアカウント作成",
             description: "デモアカウントを作成しました。自動的にログインします。",
           });
           
-          // Try logging in again
+          // 再度ログイン試行
           const { error: retryError } = await supabase.auth.signInWithPassword({
             email: demoEmail,
             password: demoPassword,

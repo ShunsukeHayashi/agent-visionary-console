@@ -1,13 +1,26 @@
 
 import React from "react";
 import { Button } from "../ui/Button";
-import { Search, Bell, User, Menu } from "lucide-react";
+import { Search, Bell, User, Menu, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface NavbarProps {
   toggleSidebar: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
+  const { signOut, user } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "ログアウト完了",
+      description: "正常にログアウトしました。",
+    });
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 glass z-50 border-b border-border/40 px-4">
       <div className="flex h-full items-center justify-between">
@@ -38,9 +51,16 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary"></span>
           </Button>
 
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+            </Button>
+            {user && (
+              <Button variant="ghost" size="icon" onClick={handleSignOut} title="ログアウト">
+                <LogOut className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,25 +80,35 @@ const Auth = () => {
     setLoading(true);
     
     try {
+      // Use a real email format for the demo account
+      const demoEmail = "demouser@example.com";
+      const demoPassword = "demo12345";
+      
       const { error } = await supabase.auth.signInWithPassword({
-        email: "demo@example.com",
-        password: "demo12345",
+        email: demoEmail,
+        password: demoPassword,
       });
       
       if (error) {
         // If demo user doesn't exist, create it first
         if (error.message.includes("Invalid login credentials")) {
           const { error: signUpError } = await supabase.auth.signUp({
-            email: "demo@example.com",
-            password: "demo12345",
+            email: demoEmail,
+            password: demoPassword,
           });
           
           if (signUpError) throw signUpError;
           
+          // Show a message that the demo account has been created
+          toast({
+            title: "デモアカウント作成",
+            description: "デモアカウントを作成しました。自動的にログインします。",
+          });
+          
           // Try logging in again
           const { error: retryError } = await supabase.auth.signInWithPassword({
-            email: "demo@example.com",
-            password: "demo12345",
+            email: demoEmail,
+            password: demoPassword,
           });
           
           if (retryError) throw retryError;

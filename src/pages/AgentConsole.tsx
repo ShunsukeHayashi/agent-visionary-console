@@ -7,6 +7,7 @@ import TaskManager from "@/components/agent-console/TaskManager";
 import WorkflowEngine from "@/components/agent-console/WorkflowEngine";
 import AgentStatusBoard from "@/components/agent-console/AgentStatusBoard";
 import ConsoleOverview from "@/components/agent-console/ConsoleOverview";
+import ProjectManagement from "@/components/agent-console/ProjectManagement";
 
 const AgentConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,11 +33,12 @@ const AgentConsole = () => {
           </header>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid grid-cols-4 mb-8">
+            <TabsList className="grid grid-cols-5 mb-8">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="tasks">Task Manager</TabsTrigger>
               <TabsTrigger value="workflows">Workflow Engine</TabsTrigger>
               <TabsTrigger value="agents">Agent Status</TabsTrigger>
+              <TabsTrigger value="projects">Projects</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-6">
               <ConsoleOverview />
@@ -49,6 +51,9 @@ const AgentConsole = () => {
             </TabsContent>
             <TabsContent value="agents" className="space-y-6">
               <AgentStatusBoard />
+            </TabsContent>
+            <TabsContent value="projects" className="space-y-6">
+              <ProjectManagement />
             </TabsContent>
           </Tabs>
         </div>

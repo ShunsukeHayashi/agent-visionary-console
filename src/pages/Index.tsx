@@ -6,7 +6,8 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import AgentsList from "@/components/dashboard/AgentsList";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import { Button } from "@/components/ui/Button";
-import { Activity, Bot, Brain, Server, Plus } from "lucide-react";
+import { Activity, Bot, Brain, Server, Plus, LayoutDashboard } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,10 +39,18 @@ const Index = () => {
                 <p className="text-sm font-medium text-muted-foreground">Dashboard</p>
                 <h1 className="text-2xl md:text-3xl font-bold">AI Agent Console</h1>
               </div>
-              <Button variant="primary" className="w-full md:w-auto shrink-0 slide-up" style={{ animationDelay: '200ms' }}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Agent
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to="/agent-console" className="w-full md:w-auto">
+                  <Button variant="outline" className="w-full md:w-auto shrink-0 slide-up" style={{ animationDelay: '150ms' }}>
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Agent Console
+                  </Button>
+                </Link>
+                <Button variant="primary" className="w-full md:w-auto shrink-0 slide-up" style={{ animationDelay: '200ms' }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Agent
+                </Button>
+              </div>
             </div>
           </header>
 

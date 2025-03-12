@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
@@ -78,6 +77,49 @@ const Auth = () => {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: "demo@example.com",
+        password: "demo12345",
+      });
+      
+      if (error) {
+        // If demo user doesn't exist, create it first
+        if (error.message.includes("Invalid login credentials")) {
+          const { error: signUpError } = await supabase.auth.signUp({
+            email: "demo@example.com",
+            password: "demo12345",
+          });
+          
+          if (signUpError) throw signUpError;
+          
+          // Try logging in again
+          const { error: retryError } = await supabase.auth.signInWithPassword({
+            email: "demo@example.com",
+            password: "demo12345",
+          });
+          
+          if (retryError) throw retryError;
+        } else {
+          throw error;
+        }
+      }
+      
+      navigate("/agent-console");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "デモログインエラー",
+        description: error.message || "デモアカウントでのログイン中にエラーが発生しました。",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="w-full max-w-md p-8 space-y-6 bg-card rounded-lg shadow-lg border border-border/50">
@@ -125,6 +167,24 @@ const Auth = () => {
                 {loading ? "ログイン中..." : "ログイン"}
               </Button>
             </form>
+            
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border"></span>
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-card px-2 text-muted-foreground">または</span>
+              </div>
+            </div>
+            
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleDemoLogin}
+              disabled={loading}
+            >
+              デモアカウントでログイン
+            </Button>
           </TabsContent>
           
           <TabsContent value="register" className="space-y-4">

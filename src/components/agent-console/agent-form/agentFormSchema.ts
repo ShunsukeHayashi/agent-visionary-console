@@ -56,7 +56,9 @@ export const createAgentSchema = z.object({
       toolRequired: z.string().optional(),
       expectedDuration: z.number().optional() // minutes
     })).optional()
-  }).optional()
+  }).optional(),
+  // エージェント画像URL
+  avatarUrl: z.string().optional()
 });
 
 export type AgentFormValues = z.infer<typeof createAgentSchema>;

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import { Button } from "@/components/ui/Button";
@@ -37,7 +36,6 @@ import {
 } from "@/components/ui/dialog";
 import CreateAgentForm from "./CreateAgentForm";
 
-// Mock agents data
 const mockAgents = [
   {
     id: "AI_001",
@@ -133,14 +131,14 @@ const AgentStatusBoard = () => {
   };
 
   const handleFormSubmit = (formData) => {
-    // Generate a unique ID for the new agent
     const newAgentId = `AI_${String(agents.length + 1).padStart(3, '0')}`;
     
-    // Create a new agent object
+    const isDynamic = formData.dynamicGeneration;
+    
     const newAgent = {
       id: newAgentId,
       name: formData.name,
-      status: "idle", // Default status for new agents
+      status: isDynamic ? "initializing" : "idle",
       type: formData.type,
       skills: formData.skills || [
         { name: "Basic Operations", level: 50 }
@@ -148,21 +146,73 @@ const AgentStatusBoard = () => {
       tools: formData.tools || [],
       currentTask: null,
       uptime: "0d 0h",
-      performance: 50, // Default performance
-      version: "1.0.0"
+      performance: isDynamic ? 0 : 50,
+      version: "1.0.0",
+      description: formData.description,
+      dynamicGeneration: formData.dynamicGeneration,
+      elementChain: formData.elementChain
     };
     
-    // Add the new agent to the agents array
     setAgents([...agents, newAgent]);
     
-    // Close the dialog
-    setIsCreateDialogOpen(false);
+    if (isDynamic) {
+      toast({
+        title: "動的エージェント初期化中",
+        description: `${formData.name} (${newAgentId}) is being dynamically initialized from context.`,
+      });
+      
+      setTimeout(() => {
+        setAgents(prevAgents => {
+          return prevAgents.map(agent => {
+            if (agent.id === newAgentId) {
+              const contextKeywords = formData.description
+                .toLowerCase()
+                .split(/\s+/)
+                .filter(word => word.length > 3);
+              
+              const dynamicSkills = [
+                { 
+                  name: "Context Understanding", 
+                  level: Math.floor(70 + Math.random() * 25) 
+                },
+                { 
+                  name: `${formData.type.charAt(0).toUpperCase() + formData.type.slice(1)} Specialization`, 
+                  level: Math.floor(65 + Math.random() * 30) 
+                }
+              ];
+              
+              if (contextKeywords.length > 0) {
+                const skillWord = contextKeywords[Math.floor(Math.random() * contextKeywords.length)];
+                dynamicSkills.push({ 
+                  name: `${skillWord.charAt(0).toUpperCase() + skillWord.slice(1)} Analysis`, 
+                  level: Math.floor(60 + Math.random() * 35) 
+                });
+              }
+              
+              return {
+                ...agent,
+                status: "active",
+                skills: dynamicSkills,
+                performance: Math.floor(75 + Math.random() * 20)
+              };
+            }
+            return agent;
+          });
+        });
+        
+        toast({
+          title: "動的エージェントが準備完了",
+          description: `${formData.name} (${newAgentId}) has been successfully initialized and is now active.`,
+        });
+      }, 3000);
+    } else {
+      toast({
+        title: "エージェント作成",
+        description: `${formData.name} (${newAgentId}) has been created successfully.`,
+      });
+    }
     
-    // Show a success toast
-    toast({
-      title: "Agent Created",
-      description: `${formData.name} (${newAgentId}) has been created successfully.`,
-    });
+    setIsCreateDialogOpen(false);
   };
 
   const getStatusIcon = (status) => {
@@ -411,7 +461,6 @@ const AgentStatusBoard = () => {
         </div>
       </div>
 
-      {/* Agent Creation Dialog - Fixed to be centered */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[525px] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>

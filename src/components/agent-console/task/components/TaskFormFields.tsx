@@ -137,7 +137,7 @@ const TaskFormFields: React.FC<TaskFormFieldsProps> = ({ form, agents, projects 
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="" disabled>利用可能なエージェントがありません</SelectItem>
+                    <SelectItem value="no-agents" disabled>利用可能なエージェントがありません</SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -169,7 +169,7 @@ const TaskFormFields: React.FC<TaskFormFieldsProps> = ({ form, agents, projects 
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="" disabled>プロジェクトがありません</SelectItem>
+                    <SelectItem value="no-projects" disabled>プロジェクトがありません</SelectItem>
                   )}
                 </SelectContent>
               </Select>

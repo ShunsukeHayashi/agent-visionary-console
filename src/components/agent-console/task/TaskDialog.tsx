@@ -40,8 +40,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
           <CreateTaskForm 
             onCancel={closeCreateDialog} 
             onSuccess={handleTaskCreated}
-            agents={agents} 
-            projects={projects}
+            agents={agents || []} 
+            projects={projects || []}
           />
         </DialogContent>
       </Dialog>
@@ -54,7 +54,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
               task={selectedTask} 
               onClose={closeTaskDetailsDialog} 
               onUpdated={handleTaskUpdated}
-              agents={agents}
+              agents={agents || []}
             />
           )}
         </DialogContent>

@@ -1,15 +1,8 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sparkles, Command, User, Settings } from "lucide-react";
+import { Sparkles, Command, User, Settings, Tool } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
@@ -52,37 +45,19 @@ export function Sidebar() {
           </Link>
           
           <Link
-            to="/settings"
+            to="/tools"
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-              pathname.startsWith("/settings") ? "bg-secondary text-primary" : "text-muted-foreground"
+              pathname.startsWith("/tools") ? "bg-secondary text-primary" : "text-muted-foreground"
             )}
           >
-            <Settings className="h-4 w-4" />
-            <span>Settings</span>
+            <Tool className="h-4 w-4" />
+            <span>ツール</span>
           </Link>
         </nav>
-      </div>
-      
-      <div className="border-t px-4 py-2">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="w-full justify-start gap-2">
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-80">
-            <SheetHeader>
-              <SheetTitle>Settings</SheetTitle>
-              <SheetDescription>
-                Manage your account settings and set preferences.
-              </SheetDescription>
-            </SheetHeader>
-            {/* Add your settings content here */}
-          </SheetContent>
-        </Sheet>
       </div>
     </aside>
   );
 }
+
+export default Sidebar;

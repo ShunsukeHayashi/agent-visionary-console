@@ -1,70 +1,58 @@
 
 import React from "react";
-import { Button } from "../ui/Button";
-import { Search, Bell, User, Menu, LogOut } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { Menu, Moon, Sun, Bell } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { useTheme } from "next-themes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface NavbarProps {
-  toggleSidebar: () => void;
+  toggleSidebar?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
-  const { signOut, user } = useAuth();
-  const { toast } = useToast();
+export function Navbar({ toggleSidebar }: NavbarProps) {
+  const { theme, setTheme } = useTheme();
 
-  const handleSignOut = async () => {
-    await signOut();
-    toast({
-      title: "ログアウト完了",
-      description: "正常にログアウトしました。",
-    });
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 glass z-50 border-b border-border/40 px-4">
-      <div className="flex h-full items-center justify-between">
-        <div className="flex items-center gap-4">
+    <header className="fixed top-0 z-50 w-full border-b bg-background">
+      <div className="flex h-14 items-center px-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-2 md:hidden"
+          onClick={toggleSidebar}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+
+        <div className="flex-1"></div>
+
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
-            onClick={toggleSidebar}
+            aria-label="Toggle theme"
+            onClick={toggleTheme}
           >
-            <Menu className="h-5 w-5" />
+            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
-          <span className="font-medium text-xl">Agent Console</span>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              placeholder="Search..."
-              className="w-64 rounded-full bg-secondary px-9 py-2 text-sm outline-none transition-all focus:w-80"
-            />
-          </div>
-
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" aria-label="Notifications">
             <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary"></span>
           </Button>
 
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-            {user && (
-              <Button variant="ghost" size="icon" onClick={handleSignOut} title="ログアウト">
-                <LogOut className="h-5 w-5" />
-              </Button>
-            )}
-          </div>
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="" alt="User" />
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </header>
   );
-};
+}
 
 export default Navbar;

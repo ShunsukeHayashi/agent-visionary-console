@@ -1,18 +1,15 @@
 
 import React, { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Sidebar from "@/components/layout/Sidebar";
+import { Navbar } from "@/components/layout/Navbar";
+import { Sidebar } from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskManager from "@/components/agent-console/TaskManager";
 import WorkflowEngine from "@/components/agent-console/WorkflowEngine";
 import AgentStatusBoard from "@/components/agent-console/AgentStatusBoard";
-import ConsoleOverview from "@/components/agent-console/ConsoleOverview";
-import ProjectManagement from "@/components/agent-console/ProjectManagement";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CommandType } from "@/components/agent-console/command/CommandButton";
 import { Button } from "@/components/ui/Button";
-import { Wrench, Database, Code, Plus } from "lucide-react";
+import { Wrench, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const AgentConsole = () => {
@@ -27,42 +24,6 @@ const AgentConsole = () => {
   const toggleToolsPanel = () => {
     setShowToolsPanel(!showToolsPanel);
   };
-
-  // ツールのサンプルデータ
-  const sampleTools: CommandType[] = [
-    {
-      id: "ocr-api",
-      label: "OCR API",
-      description: "画像からテキストを抽出するAPI",
-      isToolCommand: true,
-      toolType: "api",
-      action: () => { console.log("OCR API呼び出し"); },
-      order: 1,
-      toolDetails: {
-        input: "画像ファイル",
-        output: "テキストデータ",
-        example: "https://api.example.com/ocr"
-      }
-    },
-    {
-      id: "spreadsheet-api",
-      label: "スプレッドシートAPI",
-      description: "スプレッドシートのデータを操作",
-      isToolCommand: true,
-      toolType: "database",
-      action: () => { console.log("スプレッドシートAPI呼び出し"); },
-      order: 2
-    },
-    {
-      id: "calc-function",
-      label: "給与計算関数",
-      description: "勤怠データから給与を計算",
-      isToolCommand: true,
-      toolType: "function",
-      action: () => { console.log("給与計算関数呼び出し"); },
-      order: 3
-    }
-  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -101,37 +62,17 @@ const AgentConsole = () => {
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
-                    {sampleTools.map((tool) => (
-                      <div key={tool.id} className="border rounded-md p-2 md:p-3 bg-card hover:shadow-sm transition-shadow">
-                        <div className="flex items-start">
-                          {tool.toolType === 'api' && <Code className="h-4 w-4 mr-2 mt-0.5 text-blue-500" />}
-                          {tool.toolType === 'database' && <Database className="h-4 w-4 mr-2 mt-0.5 text-green-500" />}
-                          {tool.toolType === 'function' && <Wrench className="h-4 w-4 mr-2 mt-0.5 text-amber-500" />}
-                          <div>
-                            <h3 className="text-xs md:text-sm font-medium">{tool.label}</h3>
-                            <p className="text-xs text-muted-foreground">{tool.description}</p>
-                            {!isMobile && tool.toolDetails && (
-                              <div className="mt-2 text-xs">
-                                {tool.toolDetails.input && <p>Input: {tool.toolDetails.input}</p>}
-                                {tool.toolDetails.output && <p>Output: {tool.toolDetails.output}</p>}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                    {/* ツールの一覧はここに表示されます */}
                   </div>
                 </div>
               )}
             </header>
 
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className={`grid ${isMobile ? 'grid-cols-3 mb-4' : 'grid-cols-5 mb-8'}`}>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
+            <Tabs defaultValue="tasks" className="w-full">
+              <TabsList className={`grid ${isMobile ? 'grid-cols-3 mb-4' : 'grid-cols-3 mb-8'}`}>
                 <TabsTrigger value="tasks">Tasks</TabsTrigger>
                 <TabsTrigger value="workflows">Workflow</TabsTrigger>
                 <TabsTrigger value="agents">Agents</TabsTrigger>
-                <TabsTrigger value="projects">Projects</TabsTrigger>
               </TabsList>
               
               {/* モバイル向けの説明テキスト */}
@@ -142,9 +83,6 @@ const AgentConsole = () => {
               )}
               
               <div className="overflow-hidden">
-                <TabsContent value="overview" className="space-y-4 md:space-y-6">
-                  <ConsoleOverview />
-                </TabsContent>
                 <TabsContent value="tasks" className="space-y-4 md:space-y-6">
                   <TaskManager />
                 </TabsContent>
@@ -153,9 +91,6 @@ const AgentConsole = () => {
                 </TabsContent>
                 <TabsContent value="agents" className="space-y-4 md:space-y-6">
                   <AgentStatusBoard />
-                </TabsContent>
-                <TabsContent value="projects" className="space-y-4 md:space-y-6">
-                  <ProjectManagement />
                 </TabsContent>
               </div>
             </Tabs>

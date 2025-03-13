@@ -1,12 +1,17 @@
 
 import React from "react";
 import { Task } from "@/types/task";
-import { Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, BarChart, User } from "lucide-react";
+import HumanTaskIndicator from "./HumanTaskIndicator";
 
 interface TaskBasicInfoProps {
-  task: Task;
+  task: Task & {
+    requires_human_intervention?: boolean;
+    human_intervention_type?: string;
+  };
   agents: any[];
-  formatDate: (dateString?: string) => string;
+  formatDate: (date?: string) => string;
 }
 
 const TaskBasicInfo: React.FC<TaskBasicInfoProps> = ({ 
@@ -14,79 +19,101 @@ const TaskBasicInfo: React.FC<TaskBasicInfoProps> = ({
   agents,
   formatDate
 }) => {
+  const getStatusColor = () => {
+    switch (task.status) {
+      case "completed": return "bg-green-500";
+      case "in-progress": return "bg-blue-500";
+      case "pending": default: return "bg-amber-500";
+    }
+  };
+
+  const getPriorityColor = () => {
+    switch (task.priority) {
+      case "high": return "bg-red-500";
+      case "medium": return "bg-amber-500";
+      case "low": return "bg-green-500";
+      case "urgent": return "bg-purple-500";
+      default: return "bg-slate-500";
+    }
+  };
+
+  const getAssignedAgentName = () => {
+    if (!task.assigned_agent_id) return "未割り当て";
+    const agent = agents.find(a => a.id === task.assigned_agent_id);
+    return agent ? agent.name : "Unknown";
+  };
+
   return (
     <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold">{task.name}</h3>
-        <p className="text-sm text-muted-foreground mt-1">{task.description || "説明がありません"}</p>
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium">{task.name}</h3>
+        <p className="text-sm text-muted-foreground">{task.description || "説明なし"}</p>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-sm font-medium">ステータス</p>
-          <div className="flex items-center mt-1">
-            <div className={`w-3 h-3 rounded-full mr-2 ${
-              task.status === 'completed' ? 'bg-green-500' :
-              task.status === 'in-progress' ? 'bg-blue-500' :
-              'bg-amber-500'
-            }`}></div>
-            <p className="text-sm capitalize">
-              {task.status === 'completed' ? '完了' :
-               task.status === 'in-progress' ? '進行中' : '保留中'}
-            </p>
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">ステータス</p>
+          <div className="flex items-center">
+            <div className={`w-3 h-3 rounded-full ${getStatusColor()} mr-2`}></div>
+            <span className="capitalize">{task.status === "in-progress" ? "進行中" : task.status === "completed" ? "完了" : "保留中"}</span>
           </div>
         </div>
         
-        <div>
-          <p className="text-sm font-medium">優先度</p>
-          <p className="text-sm mt-1 capitalize">
-            {task.priority === 'urgent' ? '緊急' :
-             task.priority === 'high' ? '高' :
-             task.priority === 'medium' ? '中' : '低'}
-          </p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-sm font-medium">担当エージェント</p>
-          <p className="text-sm mt-1">
-            {task.assigned_agent_id ? 
-              agents.find(a => a.id === task.assigned_agent_id)?.name || '不明なエージェント' : 
-              '未割り当て'}
-          </p>
-        </div>
-        
-        <div>
-          <p className="text-sm font-medium">期限</p>
-          <div className="flex items-center mt-1">
-            <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-            <p className="text-sm">{formatDate(task.deadline)}</p>
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">優先度</p>
+          <div className="flex items-center">
+            <div className={`w-3 h-3 rounded-full ${getPriorityColor()} mr-2`}></div>
+            <span className="capitalize">{task.priority === "high" ? "高" : task.priority === "medium" ? "中" : task.priority === "low" ? "低" : "緊急"}</span>
           </div>
         </div>
       </div>
       
-      <div>
-        <p className="text-sm font-medium">進捗 ({task.progress}%)</p>
-        <div className="h-2 bg-muted rounded-full mt-2">
-          <div 
-            className={`h-2 rounded-full ${
-              task.status === 'completed' ? 'bg-green-500' :
-              task.status === 'in-progress' ? 'bg-blue-500' :
-              'bg-amber-500'
-            }`} 
-            style={{ width: `${task.progress}%` }}
-          ></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">担当エージェント</p>
+          <div className="flex items-center">
+            <User className="h-4 w-4 mr-2 text-primary" />
+            <span>{getAssignedAgentName()}</span>
+          </div>
+        </div>
+        
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">期限</p>
+          <div className="flex items-center">
+            <Calendar className="h-4 w-4 mr-2 text-primary" />
+            <span>{formatDate(task.deadline)}</span>
+          </div>
         </div>
       </div>
       
-      <div className="pt-2 border-t">
-        <p className="text-xs text-muted-foreground">
-          作成日: {formatDate(task.created_at)}
-          {task.updated_at && task.updated_at !== task.created_at && 
-            ` · 更新日: ${formatDate(task.updated_at)}`}
-        </p>
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground">進捗状況</p>
+        <div className="flex items-center space-x-2">
+          <div className="flex-1 h-2 bg-muted rounded-full">
+            <div 
+              className={`h-2 rounded-full ${getStatusColor()}`} 
+              style={{ width: `${task.progress}%` }}
+            ></div>
+          </div>
+          <span className="text-sm">{task.progress}%</span>
+        </div>
       </div>
+      
+      {/* ヒューマンインザループの表示 */}
+      {task.requires_human_intervention && (
+        <div className="rounded-md border bg-muted/20 p-3 mt-2">
+          <div className="flex items-center mb-2">
+            <HumanTaskIndicator 
+              type={task.human_intervention_type as "review" | "approval" | "manual" | "intervention"} 
+              size="md"
+            />
+            <span className="ml-2 text-sm font-medium">ヒューマンインザループが必要</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            このタスクでは人間による介入が必要です。自動処理だけでは完了せず、人間の判断や作業が必要なステップがあります。
+          </p>
+        </div>
+      )}
     </div>
   );
 };

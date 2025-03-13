@@ -10,7 +10,9 @@ import {
   AlertCircle, 
   Clock, 
   ChevronDown, 
-  ChevronUp 
+  ChevronUp,
+  User,
+  Bot
 } from "lucide-react";
 import {
   Collapsible,
@@ -18,6 +20,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+import HumanTaskIndicator from "./task/components/HumanTaskIndicator";
 
 // Mock workflow data
 const mockWorkflows = [
@@ -28,11 +31,12 @@ const mockWorkflows = [
     progress: 65,
     createdAt: "2023-06-10",
     steps: [
-      { id: 1, name: "Data Collection", status: "completed", agent: "AI_001" },
-      { id: 2, name: "Data Cleaning", status: "completed", agent: "AI_001" },
-      { id: 3, name: "Data Analysis", status: "in-progress", agent: "AI_001" },
-      { id: 4, name: "Report Generation", status: "pending", agent: "AI_003" },
-      { id: 5, name: "Insights Delivery", status: "pending", agent: "AI_002" }
+      { id: 1, name: "Data Collection", status: "completed", agent: "AI_001", isHumanTask: false },
+      { id: 2, name: "Data Cleaning", status: "completed", agent: "AI_001", isHumanTask: false },
+      { id: 3, name: "Data Analysis", status: "in-progress", agent: "AI_001", isHumanTask: false },
+      { id: 4, name: "人間によるデータレビュー", status: "pending", agent: "HUMAN_001", isHumanTask: true, humanTaskType: "review" },
+      { id: 5, name: "Report Generation", status: "pending", agent: "AI_003", isHumanTask: false },
+      { id: 6, name: "Insights Delivery", status: "pending", agent: "AI_002", isHumanTask: false }
     ]
   },
   {
@@ -42,10 +46,11 @@ const mockWorkflows = [
     progress: 0,
     createdAt: "2023-06-15",
     steps: [
-      { id: 1, name: "User Behavior Analysis", status: "pending", agent: "AI_004" },
-      { id: 2, name: "Preference Modeling", status: "pending", agent: "AI_004" },
-      { id: 3, name: "Algorithm Training", status: "pending", agent: "AI_001" },
-      { id: 4, name: "A/B Testing Setup", status: "pending", agent: "AI_005" }
+      { id: 1, name: "User Behavior Analysis", status: "pending", agent: "AI_004", isHumanTask: false },
+      { id: 2, name: "Preference Modeling", status: "pending", agent: "AI_004", isHumanTask: false },
+      { id: 3, name: "Algorithm Training", status: "pending", agent: "AI_001", isHumanTask: false },
+      { id: 4, name: "人間による評価・調整", status: "pending", agent: "HUMAN_002", isHumanTask: true, humanTaskType: "manual" },
+      { id: 5, name: "A/B Testing Setup", status: "pending", agent: "AI_005", isHumanTask: false }
     ]
   },
   {
@@ -55,10 +60,11 @@ const mockWorkflows = [
     progress: 100,
     createdAt: "2023-05-20",
     steps: [
-      { id: 1, name: "Competitor Analysis", status: "completed", agent: "AI_005" },
-      { id: 2, name: "Market Trend Analysis", status: "completed", agent: "AI_004" },
-      { id: 3, name: "SWOT Analysis", status: "completed", agent: "AI_004" },
-      { id: 4, name: "Report Compilation", status: "completed", agent: "AI_003" }
+      { id: 1, name: "Competitor Analysis", status: "completed", agent: "AI_005", isHumanTask: false },
+      { id: 2, name: "Market Trend Analysis", status: "completed", agent: "AI_004", isHumanTask: false },
+      { id: 3, name: "SWOT Analysis", status: "completed", agent: "AI_004", isHumanTask: false },
+      { id: 4, name: "人間による検証・承認", status: "completed", agent: "HUMAN_003", isHumanTask: true, humanTaskType: "approval" },
+      { id: 5, name: "Report Compilation", status: "completed", agent: "AI_003", isHumanTask: false }
     ]
   },
   {
@@ -68,10 +74,28 @@ const mockWorkflows = [
     progress: 30,
     createdAt: "2023-06-05",
     steps: [
-      { id: 1, name: "Intent Classification Model", status: "completed", agent: "AI_002" },
-      { id: 2, name: "Response Templates", status: "in-progress", agent: "AI_002" },
-      { id: 3, name: "Integration with CRM", status: "pending", agent: "AI_001" },
-      { id: 4, name: "Testing and Tuning", status: "pending", agent: "AI_002" }
+      { id: 1, name: "Intent Classification Model", status: "completed", agent: "AI_002", isHumanTask: false },
+      { id: 2, name: "Response Templates", status: "in-progress", agent: "AI_002", isHumanTask: false },
+      { id: 3, name: "人間によるテンプレート確認", status: "pending", agent: "HUMAN_004", isHumanTask: true, humanTaskType: "review" },
+      { id: 4, name: "Integration with CRM", status: "pending", agent: "AI_001", isHumanTask: false },
+      { id: 5, name: "Testing and Tuning", status: "pending", agent: "AI_002", isHumanTask: false },
+      { id: 6, name: "最終承認", status: "pending", agent: "HUMAN_001", isHumanTask: true, humanTaskType: "approval" }
+    ]
+  },
+  {
+    id: "W005",
+    name: "勤怠・給与計算自動化",
+    status: "in-progress",
+    progress: 40,
+    createdAt: "2023-06-01",
+    steps: [
+      { id: 1, name: "勤怠データ受け取り", status: "completed", agent: "HUMAN_002", isHumanTask: true, humanTaskType: "manual" },
+      { id: 2, name: "OCR処理", status: "completed", agent: "AI_003", isHumanTask: false },
+      { id: 3, name: "スプレッドシート集約", status: "completed", agent: "AI_003", isHumanTask: false },
+      { id: 4, name: "自動計算処理", status: "in-progress", agent: "AI_001", isHumanTask: false },
+      { id: 5, name: "給与明細作成", status: "pending", agent: "AI_004", isHumanTask: false },
+      { id: 6, name: "目視ダブルチェック", status: "pending", agent: "HUMAN_003", isHumanTask: true, humanTaskType: "review" },
+      { id: 7, name: "振込処理", status: "pending", agent: "HUMAN_001", isHumanTask: true, humanTaskType: "manual" }
     ]
   }
 ];
@@ -104,6 +128,13 @@ const WorkflowEngine = () => {
       default:
         return null;
     }
+  };
+
+  const getAgentIcon = (agentId) => {
+    if (agentId && agentId.startsWith("HUMAN")) {
+      return <User className="h-4 w-4 text-purple-500" />;
+    }
+    return <Bot className="h-4 w-4 text-blue-500" />;
   };
 
   return (
@@ -183,12 +214,25 @@ const WorkflowEngine = () => {
                             }`}></div>
                           )}
                         </div>
-                        <div className="bg-card rounded-md p-3 shadow-sm flex-grow">
+                        <div className={`bg-card rounded-md p-3 shadow-sm flex-grow ${
+                          step.isHumanTask ? "border-l-4 border-purple-400" : ""
+                        }`}>
                           <div className="flex justify-between items-center">
-                            <h5 className="font-medium text-sm">{step.name}</h5>
                             <div className="flex items-center">
-                              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded mr-2">
-                                {step.agent}
+                              <h5 className="font-medium text-sm">{step.name}</h5>
+                              {step.isHumanTask && (
+                                <div className="ml-2">
+                                  <HumanTaskIndicator 
+                                    type={step.humanTaskType} 
+                                    size="sm" 
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center">
+                              <span className="text-xs bg-muted px-2 py-0.5 rounded mr-2 flex items-center">
+                                {getAgentIcon(step.agent)}
+                                <span className="ml-1">{step.agent}</span>
                               </span>
                               <div className="flex items-center text-xs">
                                 {getStatusIcon(step.status)}

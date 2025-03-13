@@ -411,9 +411,9 @@ const AgentStatusBoard = () => {
         </div>
       </div>
 
-      {/* Agent Creation Dialog */}
+      {/* Agent Creation Dialog - Fixed to be centered */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
+        <DialogContent className="sm:max-w-[525px] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle>Create New AI Agent</DialogTitle>
             <DialogDescription>

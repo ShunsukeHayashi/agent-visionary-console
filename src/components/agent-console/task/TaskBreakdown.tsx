@@ -1,16 +1,16 @@
 
 import React, { useState } from "react";
 import { Task, ThoughtStage, thoughtStageInfo } from "@/types/task";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/Button";
-import { CheckCircle, ChevronDown, ChevronUp, Edit2, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { 
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import StageItem from "./components/StageItem";
+import ProgressBar from "./components/ProgressBar";
 
 interface TaskBreakdownProps {
   task: Task;
@@ -92,13 +92,6 @@ const TaskBreakdown: React.FC<TaskBreakdownProps> = ({
     }
   };
 
-  const getStageStatusIcon = (stage: ThoughtStage) => {
-    if (task[stage]) {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    }
-    return null;
-  };
-
   const getCompletedStagesCount = () => {
     return stageOrder.filter(stage => !!task[stage]).length;
   };
@@ -120,12 +113,7 @@ const TaskBreakdown: React.FC<TaskBreakdownProps> = ({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary" 
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
+              <ProgressBar value={getCompletedStagesCount()} max={stageOrder.length} />
               {isExpanded ? 
                 <ChevronUp className="h-5 w-5 text-muted-foreground" /> : 
                 <ChevronDown className="h-5 w-5 text-muted-foreground" />
@@ -141,69 +129,19 @@ const TaskBreakdown: React.FC<TaskBreakdownProps> = ({
           </div>
           
           {stageOrder.map((stage) => (
-            <div 
-              key={stage} 
-              className={`border rounded-md p-3 ${
-                task[stage] ? "bg-card" : "bg-muted/20"
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  {getStageStatusIcon(stage)}
-                  <span className="font-medium">{thoughtStageInfo[stage].label}</span>
-                </div>
-                
-                {!readOnly && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => startEditing(stage)}
-                    disabled={editingStage !== null}
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-              
-              <p className="text-xs text-muted-foreground mb-2">
-                {thoughtStageInfo[stage].description}
-              </p>
-              
-              {editingStage === stage ? (
-                <div className="space-y-2">
-                  <Textarea
-                    value={editedContent}
-                    onChange={(e) => setEditedContent(e.target.value)}
-                    className="min-h-[100px]"
-                    placeholder={`${thoughtStageInfo[stage].label}の内容を入力してください...`}
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={cancelEditing}
-                      disabled={isSaving}
-                    >
-                      キャンセル
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={saveStageContent}
-                      disabled={isSaving}
-                    >
-                      {isSaving ? "保存中..." : "保存"}
-                      {isSaving ? null : <Save className="ml-1 h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-2 text-sm whitespace-pre-wrap">
-                  {task[stage] || (
-                    <span className="text-muted-foreground italic">内容がまだ入力されていません</span>
-                  )}
-                </div>
-              )}
-            </div>
+            <StageItem
+              key={stage}
+              stage={stage}
+              content={task[stage]}
+              readOnly={readOnly}
+              editingStage={editingStage}
+              isSaving={isSaving}
+              onStartEditing={startEditing}
+              onCancelEditing={cancelEditing}
+              onSaveContent={saveStageContent}
+              onContentChange={setEditedContent}
+              editedContent={editedContent}
+            />
           ))}
         </CollapsibleContent>
       </Collapsible>

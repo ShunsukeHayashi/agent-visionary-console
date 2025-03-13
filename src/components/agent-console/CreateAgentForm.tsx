@@ -21,8 +21,14 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Database } from "@/components/ui/database";
-import { MessageSquare, BarChart, Image, FileText, Code } from "lucide-react";
+import { 
+  MessageSquare, 
+  BarChart, 
+  Image, 
+  FileText, 
+  Code, 
+  Database 
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Define the schema for agent creation

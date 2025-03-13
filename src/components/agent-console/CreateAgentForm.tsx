@@ -23,7 +23,7 @@ interface CreateAgentFormProps {
 // サンプルの勤怠管理フローテンプレート
 const payrollWorkflowTemplate = {
   name: "勤怠・給与計算自動化エージェント",
-  type: "payroll",
+  type: "payroll" as const, // This explicit type cast fixes the error
   description: "メールから受け取った勤怠データを処理し、自動計算して給与明細を生成するエージェントです。OCR処理、データ集計、計算処理、レポート生成機能を備えています。",
   skills: [
     { name: "OCR処理", level: 85 },

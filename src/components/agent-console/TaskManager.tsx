@@ -142,7 +142,6 @@ const TaskManager = () => {
 
   const handleTaskUpdated = () => {
     queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    setIsTaskDetailsDialogOpen(false);
     toast.success("タスクが正常に更新されました");
   };
 

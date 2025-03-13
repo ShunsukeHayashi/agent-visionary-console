@@ -13,10 +13,12 @@ import CreateAgentForm from "@/components/agent-console/CreateAgentForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const AgentConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCreateAgentDialogOpen, setIsCreateAgentDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -32,10 +34,10 @@ const AgentConsole = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={sidebarOpen} />
 
-      <main className="flex-1 pt-16 md:pl-64 transition-all duration-300 overflow-auto">
+      <main className="flex-1 pt-16 md:pl-64 transition-all duration-300 overflow-hidden">
         <ScrollArea className="h-[calc(100vh-4rem)]">
-          <div className="container py-8 px-4 md:px-8 max-w-[1600px] pb-20">
-            <header className="mb-8 fade-in">
+          <div className="container py-6 px-3 md:py-8 md:px-8 max-w-[1600px] pb-20">
+            <header className="mb-6 md:mb-8 fade-in">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Management</p>
@@ -54,28 +56,38 @@ const AgentConsole = () => {
             </header>
 
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid grid-cols-5 mb-8">
+              <TabsList className={`grid ${isMobile ? 'grid-cols-3 mb-4' : 'grid-cols-5 mb-8'}`}>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="tasks">Task Manager</TabsTrigger>
-                <TabsTrigger value="workflows">Workflow Engine</TabsTrigger>
-                <TabsTrigger value="agents">Agent Status</TabsTrigger>
+                <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                <TabsTrigger value="workflows">Workflow</TabsTrigger>
+                <TabsTrigger value="agents">Agents</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
               </TabsList>
-              <TabsContent value="overview" className="space-y-6">
-                <ConsoleOverview />
-              </TabsContent>
-              <TabsContent value="tasks" className="space-y-6">
-                <TaskManager />
-              </TabsContent>
-              <TabsContent value="workflows" className="space-y-6">
-                <WorkflowEngine />
-              </TabsContent>
-              <TabsContent value="agents" className="space-y-6">
-                <AgentStatusBoard />
-              </TabsContent>
-              <TabsContent value="projects" className="space-y-6">
-                <ProjectManagement />
-              </TabsContent>
+              
+              {/* モバイル向けの説明テキスト */}
+              {isMobile && (
+                <div className="text-xs text-muted-foreground mb-4 mt-1 px-1 italic">
+                  スワイプして全タブを表示
+                </div>
+              )}
+              
+              <div className="overflow-hidden">
+                <TabsContent value="overview" className="space-y-4 md:space-y-6">
+                  <ConsoleOverview />
+                </TabsContent>
+                <TabsContent value="tasks" className="space-y-4 md:space-y-6">
+                  <TaskManager />
+                </TabsContent>
+                <TabsContent value="workflows" className="space-y-4 md:space-y-6">
+                  <WorkflowEngine />
+                </TabsContent>
+                <TabsContent value="agents" className="space-y-4 md:space-y-6">
+                  <AgentStatusBoard />
+                </TabsContent>
+                <TabsContent value="projects" className="space-y-4 md:space-y-6">
+                  <ProjectManagement />
+                </TabsContent>
+              </div>
             </Tabs>
           </div>
         </ScrollArea>
@@ -83,7 +95,7 @@ const AgentConsole = () => {
 
       {/* Create Agent Dialog */}
       <Dialog open={isCreateAgentDialogOpen} onOpenChange={setIsCreateAgentDialogOpen}>
-        <DialogContent className="sm:max-w-[550px]">
+        <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none p-4' : 'sm:max-w-[550px]'}`}>
           <CreateAgentForm
             onSubmit={handleCreateAgentSubmit}
             onCancel={() => setIsCreateAgentDialogOpen(false)}

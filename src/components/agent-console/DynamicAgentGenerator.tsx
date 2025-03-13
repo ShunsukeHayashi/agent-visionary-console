@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/Button";
 import { Switch } from "@/components/ui/switch";
-import { Sparkles, Loader2, Brain } from "lucide-react";
+import { Sparkles, Loader2, Brain, Terminal } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import AgentThinkingProcess from "./AgentThinkingProcess";
+import AgentGenerationSequence from "./command/AgentGenerationSequence";
 
 interface DynamicAgentGeneratorProps {
   onAgentGenerated: (agentData: any) => void;
@@ -19,13 +20,20 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [useElementChain, setUseElementChain] = useState(true);
   const [useThinkingProcess, setUseThinkingProcess] = useState(false);
+  const [useCommandSequence, setUseCommandSequence] = useState(false);
   const [thinkingMode, setThinkingMode] = useState(false);
+  const [commandMode, setCommandMode] = useState(false);
   
   const handleGenerate = async () => {
     if (!goal.trim()) return;
     
     if (useThinkingProcess) {
       setThinkingMode(true);
+      return;
+    }
+
+    if (useCommandSequence) {
+      setCommandMode(true);
       return;
     }
     
@@ -85,12 +93,32 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
       setIsGenerating(false);
     }, 1500);
   };
+
+  const handleCommandBack = () => {
+    setCommandMode(false);
+  };
   
   if (thinkingMode) {
     return <AgentThinkingProcess 
       onComplete={handleThinkingProcessComplete} 
       initialGoal={goal}
     />;
+  }
+
+  if (commandMode) {
+    return (
+      <div className="space-y-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleCommandBack}
+          className="mb-4"
+        >
+          ← 戻る
+        </Button>
+        <AgentGenerationSequence onAgentGenerated={onAgentGenerated} />
+      </div>
+    );
   }
   
   return (
@@ -136,7 +164,27 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
           <Switch
             id="thinking-process"
             checked={useThinkingProcess}
-            onCheckedChange={setUseThinkingProcess}
+            onCheckedChange={(checked) => {
+              setUseThinkingProcess(checked);
+              if (checked) setUseCommandSequence(false);
+            }}
+          />
+        </div>
+
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3">
+          <div className="space-y-0.5">
+            <Label htmlFor="command-sequence">コマンドシーケンス</Label>
+            <p className="text-sm text-muted-foreground">
+              順番にコマンドを実行してコンテキストをつなぎ合わせます
+            </p>
+          </div>
+          <Switch
+            id="command-sequence"
+            checked={useCommandSequence}
+            onCheckedChange={(checked) => {
+              setUseCommandSequence(checked);
+              if (checked) setUseThinkingProcess(false);
+            }}
           />
         </div>
         
@@ -149,6 +197,20 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
               </p>
               <p className="text-sm text-blue-600 mt-1">
                 F(Achieve goal) = ∫ Agent(LLM, R&R, Tools) × Step-back questions → 最終Result
+              </p>
+            </div>
+          </div>
+        )}
+
+        {useCommandSequence && (
+          <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 flex items-start">
+            <Terminal className="h-5 w-5 text-indigo-500 mr-2 mt-0.5" />
+            <div>
+              <p className="text-sm text-indigo-700">
+                コマンドシーケンスを使用すると、各ステップを順番に実行しながらコンテキストを積み上げていきます。
+              </p>
+              <p className="text-sm text-indigo-600 mt-1">
+                Context = Command₁ → Command₂ → ... → Commandₙ = ∑ Commands(i)
               </p>
             </div>
           </div>
@@ -167,12 +229,19 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
               </>
             ) : (
               <>
-                {useThinkingProcess ? (
+                {useThinkingProcess && (
                   <>
                     <Brain className="h-4 w-4 mr-2" />
                     思考プロセスを開始
                   </>
-                ) : (
+                )}
+                {useCommandSequence && (
+                  <>
+                    <Terminal className="h-4 w-4 mr-2" />
+                    コマンドシーケンスを開始
+                  </>
+                )}
+                {!useThinkingProcess && !useCommandSequence && (
                   <>
                     <Sparkles className="h-4 w-4 mr-2" />
                     エージェントを生成

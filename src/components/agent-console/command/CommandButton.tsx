@@ -7,11 +7,11 @@ import {
   PlayCircle, 
   ListOrdered, 
   Zap,
-  Tool,
+  Wrench,
   FileText,
   Code,
   Database,
-  Function
+  Cog
 } from "lucide-react";
 
 export type CommandType = {
@@ -49,10 +49,10 @@ const CommandButton: React.FC<CommandButtonProps> = ({
     if (command.isToolCommand) {
       switch (command.toolType) {
         case "api": return <Code className="h-4 w-4 mr-2" />;
-        case "function": return <Function className="h-4 w-4 mr-2" />;
+        case "function": return <Cog className="h-4 w-4 mr-2" />;
         case "database": return <Database className="h-4 w-4 mr-2" />;
         case "document": return <FileText className="h-4 w-4 mr-2" />;
-        default: return <Tool className="h-4 w-4 mr-2" />;
+        default: return <Wrench className="h-4 w-4 mr-2" />;
       }
     }
     
@@ -62,7 +62,7 @@ const CommandButton: React.FC<CommandButtonProps> = ({
       case "list": return <ListOrdered className="h-4 w-4 mr-2" />;
       case "arrow": return <ArrowRight className="h-4 w-4 mr-2" />;
       case "zap": return <Zap className="h-4 w-4 mr-2" />;
-      case "tool": return <Tool className="h-4 w-4 mr-2" />; 
+      case "tool": return <Wrench className="h-4 w-4 mr-2" />; 
       default: return <CommandIcon className="h-4 w-4 mr-2" />;
     }
   };

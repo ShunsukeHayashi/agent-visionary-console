@@ -11,7 +11,7 @@ import ProjectManagement from "@/components/agent-console/ProjectManagement";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommandType } from "@/components/agent-console/command/CommandButton";
 import { Button } from "@/components/ui/Button";
-import { Tool, Database, Code, Plus } from "lucide-react";
+import { Wrench, Database, Code, Plus } from "lucide-react";
 
 const AgentConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -82,7 +82,7 @@ const AgentConsole = () => {
                     onClick={toggleToolsPanel}
                     className="flex items-center gap-2"
                   >
-                    <Tool className="h-4 w-4" />
+                    <Wrench className="h-4 w-4" />
                     {showToolsPanel ? "Hide Tools" : "Show Tools"}
                   </Button>
                 </div>
@@ -103,7 +103,7 @@ const AgentConsole = () => {
                         <div className="flex items-start">
                           {tool.toolType === 'api' && <Code className="h-4 w-4 mr-2 mt-0.5 text-blue-500" />}
                           {tool.toolType === 'database' && <Database className="h-4 w-4 mr-2 mt-0.5 text-green-500" />}
-                          {tool.toolType === 'function' && <Tool className="h-4 w-4 mr-2 mt-0.5 text-amber-500" />}
+                          {tool.toolType === 'function' && <Wrench className="h-4 w-4 mr-2 mt-0.5 text-amber-500" />}
                           <div>
                             <h3 className="text-sm font-medium">{tool.label}</h3>
                             <p className="text-xs text-muted-foreground">{tool.description}</p>

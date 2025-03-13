@@ -35,7 +35,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import DynamicAgentGenerator from "./DynamicAgentGenerator";
 
-// Define the schema for agent creation
 const createAgentSchema = z.object({
   name: z.string().min(2, { message: "Agent name must be at least 2 characters" }),
   type: z.enum(["data", "customer-support", "document", "analytics", "marketing", "development", "multi-agent", "dynamic"]),
@@ -84,7 +83,6 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
 
   const handleSubmit = (values: FormValues) => {
     try {
-      // If dynamic generation is enabled, generate a more descriptive name
       if (values.dynamicGeneration && values.description) {
         const contextWords = values.description.split(" ")
           .filter(word => word.length > 4)
@@ -98,15 +96,15 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
       onSubmit(values);
       
       toast({
-        title: "Agent configuration ready",
+        title: "エージェント構成準備完了",
         description: values.dynamicGeneration 
-          ? "Dynamic agent will be created based on context" 
-          : "New agent created with specified parameters",
+          ? "コンテキストに基づいて動的エージェントが作成されます" 
+          : "指定されたパラメータで新しいエージェントが作成されました",
       });
     } catch (error) {
       toast({
-        title: "Error creating agent",
-        description: "There was an error creating the agent. Please try again.",
+        title: "エージェント作成エラー",
+        description: "エージェントの作成中にエラーが発生しました。もう一度お試しください。",
         variant: "destructive",
       });
     }

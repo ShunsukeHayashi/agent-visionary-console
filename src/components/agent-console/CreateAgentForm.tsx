@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +9,8 @@ import {
   FormField, 
   FormItem, 
   FormLabel, 
-  FormMessage 
+  FormMessage,
+  FormDescription
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/Button";
@@ -27,15 +28,21 @@ import {
   Image, 
   FileText, 
   Code, 
-  Database 
+  Database,
+  Sparkles,
+  Layers
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 // Define the schema for agent creation
 const createAgentSchema = z.object({
   name: z.string().min(2, { message: "Agent name must be at least 2 characters" }),
-  type: z.enum(["data", "customer-support", "document", "analytics", "marketing", "development"]),
-  description: z.string().optional(),
+  type: z.enum(["data", "customer-support", "document", "analytics", "marketing", "development", "multi-agent", "dynamic"]),
+  description: z.string().min(10, { message: "Description must be at least 10 characters" }).max(500),
+  context: z.string().optional(),
+  dynamicGeneration: z.boolean().default(false),
+  elementChain: z.boolean().default(false),
   skills: z.array(z.object({
     name: z.string(),
     level: z.number().min(1).max(100)
@@ -52,6 +59,7 @@ interface CreateAgentFormProps {
 
 const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel }) => {
   const { toast } = useToast();
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(createAgentSchema),
@@ -59,6 +67,9 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
       name: "",
       type: "data",
       description: "",
+      context: "",
+      dynamicGeneration: false,
+      elementChain: false,
       skills: [
         { name: "Natural Language Processing", level: 75 },
         { name: "Data Analysis", level: 60 }
@@ -67,9 +78,30 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
     },
   });
 
+  const isDynamicGeneration = form.watch("dynamicGeneration");
+  const isElementChain = form.watch("elementChain");
+
   const handleSubmit = (values: FormValues) => {
     try {
+      // If dynamic generation is enabled, generate a more descriptive name
+      if (values.dynamicGeneration && values.description) {
+        const contextWords = values.description.split(" ")
+          .filter(word => word.length > 4)
+          .slice(0, 2);
+          
+        if (contextWords.length > 0 && values.name.length < 5) {
+          values.name = `${values.type.charAt(0).toUpperCase() + values.type.slice(1)} ${contextWords.join("-")}`;
+        }
+      }
+      
       onSubmit(values);
+      
+      toast({
+        title: "Agent configuration ready",
+        description: values.dynamicGeneration 
+          ? "Dynamic agent will be created based on context" 
+          : "New agent created with specified parameters",
+      });
     } catch (error) {
       toast({
         title: "Error creating agent",
@@ -93,6 +125,10 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
         return <Image className="h-4 w-4" />;
       case "development":
         return <Code className="h-4 w-4" />;
+      case "multi-agent":
+        return <Layers className="h-4 w-4" />;
+      case "dynamic":
+        return <Sparkles className="h-4 w-4" />;
       default:
         return <Database className="h-4 w-4" />;
     }
@@ -110,6 +146,9 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
               <FormControl>
                 <Input placeholder="e.g. Data Processor" {...field} />
               </FormControl>
+              <FormDescription>
+                {isDynamicGeneration && "Name will be dynamically generated based on context"}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -167,6 +206,18 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
                       <span>Development</span>
                     </div>
                   </SelectItem>
+                  <SelectItem value="multi-agent">
+                    <div className="flex items-center">
+                      <Layers className="h-4 w-4 mr-2" />
+                      <span>Multi-Agent System</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="dynamic">
+                    <div className="flex items-center">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      <span>Dynamic Agent</span>
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -179,24 +230,97 @@ const CreateAgentForm: React.FC<CreateAgentFormProps> = ({ onSubmit, onCancel })
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Description/Context</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Describe the agent's capabilities..."
+                  placeholder="Describe the agent's purpose or provide context for dynamic generation..."
                   className="resize-none h-24"
                   {...field} 
                 />
               </FormControl>
+              <FormDescription>
+                {isDynamicGeneration && "This context will be used to dynamically generate the agent's capabilities"}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        <div className="pt-2 border-t border-border/50">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-medium">Advanced Options</span>
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+            >
+              {showAdvancedOptions ? "Hide" : "Show"}
+            </Button>
+          </div>
+          
+          {showAdvancedOptions && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="dynamicGeneration"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Dynamic Generation</FormLabel>
+                      <FormDescription>
+                        Generate agent capabilities dynamically from context
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="elementChain"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Element Chain Execution</FormLabel>
+                      <FormDescription>
+                        Execute tasks using element chain methodology
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              {isElementChain && (
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                  <p className="text-sm text-muted-foreground">
+                    Element Chain will process context through multiple AI stages, breaking tasks into discrete elements that can be executed sequentially.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="flex justify-end gap-2">
           <Button variant="outline" type="button" onClick={onCancel}>
-            Cancel
+            キャンセル
           </Button>
-          <Button type="submit">Create Agent</Button>
+          <Button type="submit">
+            {isDynamicGeneration ? "動的生成" : "作成"}
+          </Button>
         </div>
       </form>
     </Form>

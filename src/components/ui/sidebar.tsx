@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Home, Bot, Tools } from "lucide-react";
+import { Home, Bot, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           <ul className="space-y-1">
             <SidebarItem icon={Home} label="Overview" active />
             <SidebarItem icon={Bot} label="Agents" />
-            <SidebarItem icon={Tools} label="Tools" />
+            <SidebarItem icon={Wrench} label="Tools" />
           </ul>
         </nav>
       </div>

@@ -1,14 +1,17 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sparkles, Command, User, Settings, Tool } from "lucide-react";
+import { Sparkles, Command, User, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+}
+
+export function Sidebar({ isOpen = false }: SidebarProps) {
   const location = useLocation();
   const pathname = location.pathname;
-  const [isOpen, setIsOpen] = useState(false);
   const isMobile = window.innerWidth < 768;
 
   return (
@@ -51,7 +54,7 @@ export function Sidebar() {
               pathname.startsWith("/tools") ? "bg-secondary text-primary" : "text-muted-foreground"
             )}
           >
-            <Tool className="h-4 w-4" />
+            <Wrench className="h-4 w-4" />
             <span>ツール</span>
           </Link>
         </nav>

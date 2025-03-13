@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DashboardCard from "@/components/dashboard/DashboardCard";
@@ -33,7 +32,21 @@ const TaskManager = () => {
         throw error;
       }
       
-      return data as Task[];
+      // Transform data to match Task interface
+      const transformedData: Task[] = data.map(item => ({
+        ...item,
+        // Ensure all required fields from Task interface are present
+        id: item.id,
+        title: item.name, // Map name to title for compatibility
+        name: item.name,
+        status: item.status as Task['status'],
+        priority: item.priority as Task['priority'],
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        progress: item.progress || 0
+      }));
+      
+      return transformedData;
     }
   });
 

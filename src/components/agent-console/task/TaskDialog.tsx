@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Task } from "@/types/task";
 import TaskDetails from "./TaskDetails";
 import CreateTaskForm from "./CreateTaskForm";
@@ -34,21 +34,21 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
 }) => {
   return (
     <>
-      {/* 新規タスク作成ダイアログ */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[800px] w-[90vw] max-h-[90vh] overflow-y-auto">
+      {/* 新規タスク作成シート */}
+      <Sheet open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <SheetContent side="bottom" className="h-[90vh] w-full sm:max-w-full overflow-y-auto">
           <CreateTaskForm 
             onCancel={closeCreateDialog} 
             onSuccess={handleTaskCreated}
             agents={agents || []} 
             projects={projects || []}
           />
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* タスク詳細ダイアログ */}
-      <Dialog open={isTaskDetailsDialogOpen} onOpenChange={setIsTaskDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-[800px] w-[90vw] max-h-[90vh] overflow-y-auto">
+      {/* タスク詳細シート */}
+      <Sheet open={isTaskDetailsDialogOpen} onOpenChange={setIsTaskDetailsDialogOpen}>
+        <SheetContent side="bottom" className="h-[90vh] w-full sm:max-w-full overflow-y-auto">
           {selectedTask && (
             <TaskDetails 
               task={selectedTask} 
@@ -57,8 +57,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
               agents={agents || []}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </>
   );
 };

@@ -6,7 +6,12 @@ import {
   ArrowRight, 
   PlayCircle, 
   ListOrdered, 
-  Zap
+  Zap,
+  Tool,
+  FileText,
+  Code,
+  Database,
+  Function
 } from "lucide-react";
 
 export type CommandType = {
@@ -16,6 +21,14 @@ export type CommandType = {
   icon?: string;
   action: () => void;
   order: number;
+  isToolCommand?: boolean;
+  toolType?: 'api' | 'function' | 'database' | 'document' | string;
+  toolDetails?: {
+    input?: string;
+    output?: string;
+    parameters?: Array<{name: string, type: string, description: string}>;
+    example?: string;
+  };
 };
 
 interface CommandButtonProps {
@@ -32,11 +45,24 @@ const CommandButton: React.FC<CommandButtonProps> = ({
   onExecute
 }) => {
   const getIcon = () => {
+    // Tool関連のアイコン
+    if (command.isToolCommand) {
+      switch (command.toolType) {
+        case "api": return <Code className="h-4 w-4 mr-2" />;
+        case "function": return <Function className="h-4 w-4 mr-2" />;
+        case "database": return <Database className="h-4 w-4 mr-2" />;
+        case "document": return <FileText className="h-4 w-4 mr-2" />;
+        default: return <Tool className="h-4 w-4 mr-2" />;
+      }
+    }
+    
+    // 既存のアイコン
     switch (command.icon) {
       case "play": return <PlayCircle className="h-4 w-4 mr-2" />;
       case "list": return <ListOrdered className="h-4 w-4 mr-2" />;
       case "arrow": return <ArrowRight className="h-4 w-4 mr-2" />;
       case "zap": return <Zap className="h-4 w-4 mr-2" />;
+      case "tool": return <Tool className="h-4 w-4 mr-2" />; 
       default: return <CommandIcon className="h-4 w-4 mr-2" />;
     }
   };
@@ -50,17 +76,18 @@ const CommandButton: React.FC<CommandButtonProps> = ({
         ${isActive ? "bg-primary text-primary-foreground" : ""}
         ${isNext ? "border-primary border-dashed text-primary" : ""}
         ${!isActive && !isNext ? "opacity-70" : ""}
+        ${command.isToolCommand ? "border-l-4 border-l-blue-500" : ""}
       `}
       onClick={onExecute}
       disabled={!isActive && !isNext}
     >
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         {getIcon()}
-        <div>
-          <div className="font-medium">{command.label}</div>
-          <div className="text-xs opacity-90">{command.description}</div>
+        <div className="flex-1 min-w-0">
+          <div className="font-medium truncate">{command.label}</div>
+          <div className="text-xs opacity-90 truncate">{command.description}</div>
         </div>
-        {isNext && <ArrowRight className="ml-auto h-4 w-4 text-primary" />}
+        {isNext && <ArrowRight className="ml-auto h-4 w-4 text-primary flex-shrink-0" />}
       </div>
     </Button>
   );

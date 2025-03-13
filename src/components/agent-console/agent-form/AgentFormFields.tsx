@@ -28,7 +28,10 @@ import {
   Code, 
   Database,
   Sparkles,
-  Layers
+  Layers,
+  Calculator,
+  Workflow,
+  Cog
 } from "lucide-react";
 
 // Import the schema from a separate file
@@ -60,6 +63,12 @@ const AgentFormFields: React.FC<AgentFormFieldsProps> = ({ form, isDynamicGenera
         return <Layers className="h-4 w-4" />;
       case "dynamic":
         return <Sparkles className="h-4 w-4" />;
+      case "payroll":  // 新規追加
+        return <Calculator className="h-4 w-4" />;
+      case "workflow":  // 新規追加
+        return <Workflow className="h-4 w-4" />;
+      case "automation":  // 新規追加
+        return <Cog className="h-4 w-4" />;
       default:
         return <Database className="h-4 w-4" />;
     }
@@ -146,6 +155,25 @@ const AgentFormFields: React.FC<AgentFormFieldsProps> = ({ form, isDynamicGenera
                   <div className="flex items-center">
                     <Sparkles className="h-4 w-4 mr-2" />
                     <span>Dynamic Agent</span>
+                  </div>
+                </SelectItem>
+                {/* 新規追加タイプ */}
+                <SelectItem value="payroll">
+                  <div className="flex items-center">
+                    <Calculator className="h-4 w-4 mr-2" />
+                    <span>給与計算エージェント</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="workflow">
+                  <div className="flex items-center">
+                    <Workflow className="h-4 w-4 mr-2" />
+                    <span>ワークフローエージェント</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="automation">
+                  <div className="flex items-center">
+                    <Cog className="h-4 w-4 mr-2" />
+                    <span>自動化エージェント</span>
                   </div>
                 </SelectItem>
               </SelectContent>

@@ -19,15 +19,17 @@ const DemoLoginButton = () => {
       const demoPassword = "demo12345";
       
       // まず既存のデモユーザーでログインを試みる
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: demoEmail,
         password: demoPassword,
       });
       
-      if (error) {
+      if (signInError) {
+        console.log("ログインエラー:", signInError.message);
+        
         // デモユーザーが存在しない場合は作成
-        if (error.message.includes("Invalid login credentials")) {
-          const { error: signUpError } = await supabase.auth.signUp({
+        if (signInError.message.includes("Invalid login credentials")) {
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email: demoEmail,
             password: demoPassword,
             options: {
@@ -37,39 +39,62 @@ const DemoLoginButton = () => {
             }
           });
           
-          if (signUpError) throw signUpError;
+          if (signUpError) {
+            console.error("サインアップエラー:", signUpError);
+            throw signUpError;
+          }
+          
+          // メール確認が必要な場合のエラーチェック
+          if (signUpData?.user && !signUpData.session) {
+            toast({
+              title: "メール確認が必要です",
+              description: "Supabaseの管理画面でメール確認設定を無効にしてください。",
+              duration: 5000,
+            });
+            throw new Error("Email confirmation required");
+          }
           
           toast({
-            title: "デモアカウント作成",
-            description: "デモアカウントを作成しました。自動的にログインします。",
+            title: "デモアカウント作成成功",
+            description: "デモアカウントでログインしました。",
           });
           
-          // 再度ログイン試行
-          const { error: retryError } = await supabase.auth.signInWithPassword({
-            email: demoEmail,
-            password: demoPassword,
+          navigate("/agent-console");
+          return;
+        } else if (signInError.message.includes("Email not confirmed")) {
+          // メール確認エラーの場合
+          toast({
+            variant: "destructive",
+            title: "メール確認が必要です",
+            description: "Supabaseの管理画面でメール確認設定を無効にしてください。",
+            duration: 5000,
           });
-          
-          if (retryError) throw retryError;
+          throw new Error("Email confirmation required");
         } else {
-          throw error;
+          throw signInError;
         }
       }
       
-      toast({
-        title: "デモログイン成功",
-        description: "デモアカウントでログインしました。",
-      });
-      
-      navigate("/agent-console");
+      // ログイン成功
+      if (signInData?.session) {
+        toast({
+          title: "デモログイン成功",
+          description: "デモアカウントでログインしました。",
+        });
+        
+        navigate("/agent-console");
+      }
     } catch (error: any) {
       console.error("デモログインエラー:", error);
       
-      toast({
-        variant: "destructive",
-        title: "デモログインエラー",
-        description: "デモアカウントでのログイン中にエラーが発生しました。Supabaseの管理画面でメール確認が無効になっていることを確認してください。",
-      });
+      // すでにエラーメッセージが表示されている場合は重複して表示しない
+      if (!error.message.includes("Email confirmation required")) {
+        toast({
+          variant: "destructive",
+          title: "デモログインエラー",
+          description: "Supabaseの管理画面でメール確認が無効になっていることを確認してください。",
+        });
+      }
     } finally {
       setLoading(false);
     }

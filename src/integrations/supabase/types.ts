@@ -9,6 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agents: {
+        Row: {
+          created_at: string | null
+          current_task: string | null
+          description: string | null
+          dynamic_generation: boolean | null
+          element_chain: boolean | null
+          id: string
+          name: string
+          performance: number | null
+          project_id: string | null
+          skills: Json | null
+          status: string
+          tools: string[] | null
+          type: string
+          updated_at: string | null
+          uptime: string | null
+          version: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_task?: string | null
+          description?: string | null
+          dynamic_generation?: boolean | null
+          element_chain?: boolean | null
+          id: string
+          name: string
+          performance?: number | null
+          project_id?: string | null
+          skills?: Json | null
+          status?: string
+          tools?: string[] | null
+          type: string
+          updated_at?: string | null
+          uptime?: string | null
+          version?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_task?: string | null
+          description?: string | null
+          dynamic_generation?: boolean | null
+          element_chain?: boolean | null
+          id?: string
+          name?: string
+          performance?: number | null
+          project_id?: string | null
+          skills?: Json | null
+          status?: string
+          tools?: string[] | null
+          type?: string
+          updated_at?: string | null
+          uptime?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkpoints: {
         Row: {
           created_at: string | null
@@ -170,6 +235,86 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_agent_id: string | null
+          checkpoint_id: string | null
+          created_at: string | null
+          deadline: string | null
+          description: string | null
+          id: string
+          meeting_transcript_id: string | null
+          name: string
+          planning_question_id: string | null
+          priority: string
+          progress: number
+          project_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          checkpoint_id?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          meeting_transcript_id?: string | null
+          name: string
+          planning_question_id?: string | null
+          priority?: string
+          progress?: number
+          project_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          checkpoint_id?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          meeting_transcript_id?: string | null
+          name?: string
+          planning_question_id?: string | null
+          priority?: string
+          progress?: number
+          project_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_checkpoint_id_fkey"
+            columns: ["checkpoint_id"]
+            isOneToOne: false
+            referencedRelation: "checkpoints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_meeting_transcript_id_fkey"
+            columns: ["meeting_transcript_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_transcripts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_planning_question_id_fkey"
+            columns: ["planning_question_id"]
+            isOneToOne: false
+            referencedRelation: "planning_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

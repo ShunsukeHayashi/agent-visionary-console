@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
+import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TaskManager from "@/components/agent-console/TaskManager";
 import WorkflowEngine from "@/components/agent-console/WorkflowEngine";
@@ -68,8 +69,8 @@ const AgentConsole = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <Sidebar isOpen={sidebarOpen} />
 
-      <main className="flex-1 pt-16 md:pl-64 transition-all duration-300 overflow-hidden">
-        <ScrollArea className="h-[calc(100vh-4rem)]">
+      <main className="flex-1 pt-16 md:pl-64 transition-all duration-300 overflow-hidden flex flex-col">
+        <ScrollArea className="h-[calc(100vh-4rem-3.5rem)]">
           <div className="container py-6 px-3 md:py-8 md:px-8 max-w-[1600px] pb-20">
             <header className="mb-6 md:mb-8 fade-in">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -160,6 +161,7 @@ const AgentConsole = () => {
             </Tabs>
           </div>
         </ScrollArea>
+        <Footer />
       </main>
     </div>
   );

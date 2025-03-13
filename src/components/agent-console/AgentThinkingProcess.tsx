@@ -1,43 +1,35 @@
-
-import React, { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/Button";
+import React, { useState, useEffect } from "react";
 import { 
-  ArrowLeftCircle, 
-  ArrowRightCircle, 
-  Brain, 
-  FlowChart, 
-  Goal, 
-  Layers,
-  Lightbulb, 
-  List,
-  MessagesSquare
+  ArrowBigRightDash, 
+  ArrowBigLeftDash, 
+  ArrowDownToLine, 
+  BrainCircuit, 
+  Check, 
+  GitBranch,
+  RotateCcw
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
-interface StepItem {
-  id: string;
-  content: string;
-  completed: boolean;
+interface AgentThinkingProcessProps {
+  onComplete: (steps: any[]) => void;
+  initialGoal: string;
 }
 
-interface ThinkingProcessProps {
-  onComplete?: (steps: StepItem[]) => void;
-  initialGoal?: string;
-}
-
-const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
-  onComplete,
-  initialGoal = ""
+const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({ 
+  onComplete, 
+  initialGoal 
 }) => {
   const [goal, setGoal] = useState(initialGoal);
   const [currentMode, setCurrentMode] = useState<'goal' | 'backward' | 'forward' | 'result' | 'flowchart'>('goal');
-  const [backwardSteps, setBackwardSteps] = useState<StepItem[]>([]);
-  const [forwardSteps, setForwardSteps] = useState<StepItem[]>([]);
+  const [backwardSteps, setBackwardSteps] = useState<any[]>([]);
+  const [forwardSteps, setForwardSteps] = useState<any[]>([]);
   const [newStep, setNewStep] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
-  
-  // フローチャートのモックデータ（実際にはcanvasやSVGで実装)
   const [flowchartCreated, setFlowchartCreated] = useState(false);
+  const { toast } = useToast();
 
   const handleGoalSubmit = () => {
     if (goal.trim()) {
@@ -57,13 +49,11 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
       setBackwardSteps([...backwardSteps, step]);
       setNewStep("");
       
-      // 次の逆算質問を生成
       setCurrentQuestion(`「${newStep}」を達成するためには、直前に何を達成している必要がありますか？`);
     }
   };
 
   const finishBackwardSteps = () => {
-    // 逆方向のステップを反転させて順方向のステップを生成
     const reversed = [...backwardSteps].reverse().map((step, index) => ({
       id: `forward-${index}`,
       content: step.content,
@@ -101,21 +91,20 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
     <div className="space-y-6">
       <Card className="p-4 border-primary/30">
         <div className="mb-4 flex items-center space-x-2">
-          <Brain className="text-primary h-5 w-5" />
+          <BrainCircuit className="text-primary h-5 w-5" />
           <h2 className="text-lg font-medium">
             思考エージェント - Working Backwardsプロセス
           </h2>
         </div>
         
         <div className="space-y-4">
-          {/* モード表示 */}
           <div className="flex justify-between bg-background/50 p-2 rounded-md">
             <div 
               className={`py-1 px-3 rounded-md flex items-center gap-1 ${
                 currentMode === 'goal' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
               }`}
             >
-              <Goal className="h-4 w-4" />
+              <BrainCircuit className="h-4 w-4" />
               <span className="text-xs font-medium">ゴール設定</span>
             </div>
             <div 
@@ -123,7 +112,7 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 currentMode === 'backward' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
               }`}
             >
-              <ArrowLeftCircle className="h-4 w-4" />
+              <ArrowBigLeftDash className="h-4 w-4" />
               <span className="text-xs font-medium">逆算ステップ</span>
             </div>
             <div 
@@ -131,7 +120,7 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 currentMode === 'forward' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
               }`}
             >
-              <ArrowRightCircle className="h-4 w-4" />
+              <ArrowBigRightDash className="h-4 w-4" />
               <span className="text-xs font-medium">順方向再整理</span>
             </div>
             <div 
@@ -139,7 +128,7 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 currentMode === 'result' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
               }`}
             >
-              <Lightbulb className="h-4 w-4" />
+              <Check className="h-4 w-4" />
               <span className="text-xs font-medium">統合結果</span>
             </div>
             <div 
@@ -147,12 +136,11 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 currentMode === 'flowchart' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
               }`}
             >
-              <FlowChart className="h-4 w-4" />
+              <GitBranch className="h-4 w-4" />
               <span className="text-xs font-medium">フローチャート</span>
             </div>
           </div>
           
-          {/* ゴール設定モード */}
           {currentMode === 'goal' && (
             <div className="space-y-3">
               <div>
@@ -173,7 +161,6 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
             </div>
           )}
           
-          {/* 逆算ステップモード */}
           {currentMode === 'backward' && (
             <div className="space-y-3">
               <div>
@@ -224,7 +211,6 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
             </div>
           )}
           
-          {/* 順方向再整理モード */}
           {currentMode === 'forward' && (
             <div className="space-y-3">
               <div>
@@ -259,7 +245,6 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
             </div>
           )}
           
-          {/* 統合結果モード */}
           {currentMode === 'result' && (
             <div className="space-y-3">
               <div>
@@ -288,7 +273,6 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
             </div>
           )}
           
-          {/* フローチャートモード */}
           {currentMode === 'flowchart' && (
             <div className="space-y-3">
               <label className="block text-sm font-medium mb-1">フローチャート</label>
@@ -299,7 +283,7 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                     <div className="bg-primary text-white px-4 py-2 rounded-md mb-2 min-w-40 text-center">
                       {goal}
                     </div>
-                    <ArrowRightCircle className="rotate-90 h-5 w-5 text-muted-foreground" />
+                    <ArrowBigRightDash className="rotate-90 h-5 w-5 text-muted-foreground" />
                   </div>
 
                   <div className="grid grid-cols-1 gap-2">
@@ -309,7 +293,7 @@ const AgentThinkingProcess: React.FC<ThinkingProcessProps> = ({
                           {String.fromCharCode(65 + index)}: {step.content}
                         </div>
                         {index < forwardSteps.length - 1 && (
-                          <ArrowRightCircle className="rotate-90 h-5 w-5 mx-auto text-muted-foreground" />
+                          <ArrowBigRightDash className="rotate-90 h-5 w-5 mx-auto text-muted-foreground" />
                         )}
                       </React.Fragment>
                     ))}

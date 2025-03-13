@@ -8,6 +8,7 @@ import WorkflowEngine from "@/components/agent-console/WorkflowEngine";
 import AgentStatusBoard from "@/components/agent-console/AgentStatusBoard";
 import ConsoleOverview from "@/components/agent-console/ConsoleOverview";
 import ProjectManagement from "@/components/agent-console/ProjectManagement";
+import DemoFlowContainer from "@/components/agent-console/DemoFlowContainer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CreateAgentForm from "@/components/agent-console/CreateAgentForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -56,12 +57,13 @@ const AgentConsole = () => {
             </header>
 
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className={`grid ${isMobile ? 'grid-cols-3 mb-4' : 'grid-cols-5 mb-8'}`}>
+              <TabsList className={`grid ${isMobile ? 'grid-cols-3 mb-4' : 'grid-cols-6 mb-8'}`}>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="tasks">Tasks</TabsTrigger>
                 <TabsTrigger value="workflows">Workflow</TabsTrigger>
                 <TabsTrigger value="agents">Agents</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="demo">Demo Flow</TabsTrigger>
               </TabsList>
               
               {/* モバイル向けの説明テキスト */}
@@ -86,6 +88,9 @@ const AgentConsole = () => {
                 </TabsContent>
                 <TabsContent value="projects" className="space-y-4 md:space-y-6">
                   <ProjectManagement />
+                </TabsContent>
+                <TabsContent value="demo" className="space-y-4 md:space-y-6">
+                  <DemoFlowContainer />
                 </TabsContent>
               </div>
             </Tabs>

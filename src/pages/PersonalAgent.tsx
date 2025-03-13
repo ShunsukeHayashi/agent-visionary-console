@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Navbar } from "@/components/layout/Navbar";
-import { Sidebar } from "@/components/layout/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 import PersonalGrowableAgent from "@/components/agent-console/PersonalGrowableAgent";
 
 const PersonalAgentPage: React.FC = () => {
@@ -12,7 +11,7 @@ const PersonalAgentPage: React.FC = () => {
         <Sidebar />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mx-auto max-w-5xl">
-            <h1 className="text-2xl font-bold mb-6">パーソナルエージェント</h1>
+            <h1 className="text-2xl font-bold mb-6" data-testid="personal-agent-title">パーソナルエージェント</h1>
             <PersonalGrowableAgent />
           </div>
         </main>

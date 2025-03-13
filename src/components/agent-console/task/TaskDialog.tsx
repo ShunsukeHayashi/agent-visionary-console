@@ -36,7 +36,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
     <>
       {/* 新規タスク作成ダイアログ */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[800px] w-[90vw] max-h-[90vh] overflow-y-auto">
           <CreateTaskForm 
             onCancel={closeCreateDialog} 
             onSuccess={handleTaskCreated}
@@ -48,7 +48,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({
 
       {/* タスク詳細ダイアログ */}
       <Dialog open={isTaskDetailsDialogOpen} onOpenChange={setIsTaskDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[800px] w-[90vw] max-h-[90vh] overflow-y-auto">
           {selectedTask && (
             <TaskDetails 
               task={selectedTask} 

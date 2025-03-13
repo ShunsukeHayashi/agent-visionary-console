@@ -28,6 +28,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from "@/components/ui/dialog";
+import CreateAgentForm from "./CreateAgentForm";
 
 // Mock agents data
 const mockAgents = [
@@ -116,13 +124,44 @@ const mockAgents = [
 const AgentStatusBoard = () => {
   const [agents, setAgents] = useState(mockAgents);
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   
   const { toast } = useToast();
 
   const createNewAgent = () => {
+    setIsCreateDialogOpen(true);
+  };
+
+  const handleFormSubmit = (formData) => {
+    // Generate a unique ID for the new agent
+    const newAgentId = `AI_${String(agents.length + 1).padStart(3, '0')}`;
+    
+    // Create a new agent object
+    const newAgent = {
+      id: newAgentId,
+      name: formData.name,
+      status: "idle", // Default status for new agents
+      type: formData.type,
+      skills: formData.skills || [
+        { name: "Basic Operations", level: 50 }
+      ],
+      tools: formData.tools || [],
+      currentTask: null,
+      uptime: "0d 0h",
+      performance: 50, // Default performance
+      version: "1.0.0"
+    };
+    
+    // Add the new agent to the agents array
+    setAgents([...agents, newAgent]);
+    
+    // Close the dialog
+    setIsCreateDialogOpen(false);
+    
+    // Show a success toast
     toast({
-      title: "Create New AI Agent",
-      description: "This feature will allow creating new AI agents.",
+      title: "Agent Created",
+      description: `${formData.name} (${newAgentId}) has been created successfully.`,
     });
   };
 
@@ -371,6 +410,22 @@ const AgentStatusBoard = () => {
           )}
         </div>
       </div>
+
+      {/* Agent Creation Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Create New AI Agent</DialogTitle>
+            <DialogDescription>
+              Fill out the form below to create a new AI agent.
+            </DialogDescription>
+          </DialogHeader>
+          <CreateAgentForm 
+            onSubmit={handleFormSubmit} 
+            onCancel={() => setIsCreateDialogOpen(false)} 
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

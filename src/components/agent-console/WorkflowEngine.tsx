@@ -21,9 +21,30 @@ import {
 } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import HumanTaskIndicator from "./task/components/HumanTaskIndicator";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+// Step type definition to fix type errors
+type WorkflowStep = {
+  id: number;
+  name: string;
+  status: "completed" | "in-progress" | "pending";
+  agent: string;
+  isHumanTask?: boolean;
+  humanTaskType?: "review" | "approval" | "manual" | "intervention";
+};
+
+// Workflow type definition
+type Workflow = {
+  id: string;
+  name: string;
+  status: "completed" | "in-progress" | "pending";
+  progress: number;
+  createdAt: string;
+  steps: WorkflowStep[];
+};
 
 // Mock workflow data
-const mockWorkflows = [
+const mockWorkflows: Workflow[] = [
   {
     id: "W001",
     name: "Customer Data Analysis",
@@ -101,12 +122,13 @@ const mockWorkflows = [
 ];
 
 const WorkflowEngine = () => {
-  const [workflows, setWorkflows] = useState(mockWorkflows);
-  const [openWorkflow, setOpenWorkflow] = useState(null);
+  const [workflows, setWorkflows] = useState<Workflow[]>(mockWorkflows);
+  const [openWorkflow, setOpenWorkflow] = useState<string | null>(null);
+  const isMobile = useIsMobile();
   
   const { toast } = useToast();
 
-  const toggleWorkflow = (id) => {
+  const toggleWorkflow = (id: string) => {
     setOpenWorkflow(openWorkflow === id ? null : id);
   };
 
@@ -117,7 +139,7 @@ const WorkflowEngine = () => {
     });
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: "completed" | "in-progress" | "pending") => {
     switch (status) {
       case "completed":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
@@ -130,7 +152,7 @@ const WorkflowEngine = () => {
     }
   };
 
-  const getAgentIcon = (agentId) => {
+  const getAgentIcon = (agentId: string) => {
     if (agentId && agentId.startsWith("HUMAN")) {
       return <User className="h-4 w-4 text-purple-500" />;
     }
@@ -138,17 +160,17 @@ const WorkflowEngine = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <DashboardCard>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold">Workflow Engine</h2>
-          <Button variant="primary" onClick={createNewWorkflow}>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-base md:text-lg font-semibold">Workflow Engine</h2>
+          <Button variant="primary" onClick={createNewWorkflow} size={isMobile ? "sm" : "default"}>
             <Plus className="h-4 w-4 mr-2" />
-            New Workflow
+            {isMobile ? "新規" : "New Workflow"}
           </Button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {workflows.map((workflow) => (
             <Collapsible
               key={workflow.id}
@@ -157,20 +179,22 @@ const WorkflowEngine = () => {
               className="border rounded-md overflow-hidden"
             >
               <CollapsibleTrigger asChild>
-                <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center">
-                    <BarChart className="h-5 w-5 mr-2 text-primary" />
-                    <div>
-                      <h3 className="font-medium">{workflow.name}</h3>
-                      <p className="text-xs text-muted-foreground">ID: {workflow.id} · Created: {workflow.createdAt}</p>
+                <div className="flex items-center justify-between p-3 md:p-4 cursor-pointer hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center min-w-0">
+                    <BarChart className="h-5 w-5 mr-2 text-primary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-sm md:text-base truncate">{workflow.name}</h3>
+                      {!isMobile && (
+                        <p className="text-xs text-muted-foreground">ID: {workflow.id} · Created: {workflow.createdAt}</p>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center text-sm mr-4">
+                  <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+                    <div className="flex items-center text-xs md:text-sm md:mr-4">
                       {getStatusIcon(workflow.status)}
-                      <span className="ml-2 capitalize">{workflow.status.replace("-", " ")}</span>
+                      <span className="ml-1 md:ml-2 capitalize hidden md:inline-block">{workflow.status.replace("-", " ")}</span>
                     </div>
-                    <div className="w-32 bg-muted rounded-full h-2">
+                    <div className="w-16 md:w-32 bg-muted rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full ${
                           workflow.status === "completed" ? "bg-green-500" :
@@ -180,61 +204,62 @@ const WorkflowEngine = () => {
                         style={{ width: `${workflow.progress}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm text-muted-foreground">{workflow.progress}%</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">{workflow.progress}%</span>
                     {openWorkflow === workflow.id ? 
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" /> : 
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                      <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" /> : 
+                      <ChevronDown className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                     }
                   </div>
                 </div>
               </CollapsibleTrigger>
-              <CollapsibleContent className="border-t px-4 py-3 bg-muted/10">
+              <CollapsibleContent className="border-t px-3 py-2 md:px-4 md:py-3 bg-muted/10">
                 <div className="space-y-2">
-                  <h4 className="font-medium text-sm mb-3">Workflow Steps</h4>
+                  <h4 className="font-medium text-xs md:text-sm mb-2 md:mb-3">Workflow Steps</h4>
                   <div className="relative">
                     {workflow.steps.map((step, index) => (
-                      <div key={step.id} className="flex mb-8 last:mb-0 relative">
-                        <div className="flex flex-col items-center mr-4">
-                          <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${
+                      <div key={step.id} className="flex mb-6 md:mb-8 last:mb-0 relative">
+                        <div className="flex flex-col items-center mr-2 md:mr-4">
+                          <div className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full border-2 ${
                             step.status === "completed" ? "border-green-500 bg-green-50" :
                             step.status === "in-progress" ? "border-blue-500 bg-blue-50" :
                             "border-gray-300 bg-gray-50"
                           }`}>
                             {step.status === "completed" ? (
-                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-500" />
                             ) : step.status === "in-progress" ? (
-                              <Clock className="h-4 w-4 text-blue-500" />
+                              <Clock className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
                             ) : (
                               <span className="text-xs font-medium text-gray-500">{index + 1}</span>
                             )}
                           </div>
                           {index < workflow.steps.length - 1 && (
-                            <div className={`w-0.5 h-6 ${
+                            <div className={`w-0.5 h-5 md:h-6 ${
                               step.status === "completed" ? "bg-green-500" : "bg-gray-300"
                             }`}></div>
                           )}
                         </div>
-                        <div className={`bg-card rounded-md p-3 shadow-sm flex-grow ${
+                        <div className={`bg-card rounded-md p-2 md:p-3 shadow-sm flex-grow ${
                           step.isHumanTask ? "border-l-4 border-purple-400" : ""
                         }`}>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center">
-                              <h5 className="font-medium text-sm">{step.name}</h5>
-                              {step.isHumanTask && (
-                                <div className="ml-2">
+                          <div className="flex justify-between items-center flex-wrap">
+                            <div className="flex items-center flex-wrap mr-1">
+                              <h5 className="font-medium text-xs md:text-sm">{step.name}</h5>
+                              {step.isHumanTask && step.humanTaskType && (
+                                <div className="ml-1 md:ml-2 mt-1 md:mt-0">
                                   <HumanTaskIndicator 
                                     type={step.humanTaskType} 
-                                    size="sm" 
+                                    size={isMobile ? "sm" : "md"} 
+                                    showLabel={!isMobile}
                                   />
                                 </div>
                               )}
                             </div>
-                            <div className="flex items-center">
-                              <span className="text-xs bg-muted px-2 py-0.5 rounded mr-2 flex items-center">
+                            <div className="flex items-center flex-wrap mt-1 md:mt-0">
+                              <span className="text-xs bg-muted px-1 py-0.5 md:px-2 md:py-0.5 rounded mr-1 md:mr-2 flex items-center">
                                 {getAgentIcon(step.agent)}
-                                <span className="ml-1">{step.agent}</span>
+                                <span className="ml-1 text-[10px] md:text-xs">{step.agent}</span>
                               </span>
-                              <div className="flex items-center text-xs">
+                              <div className="flex items-center text-[10px] md:text-xs">
                                 {getStatusIcon(step.status)}
                                 <span className="ml-1 capitalize">{step.status.replace("-", " ")}</span>
                               </div>
@@ -242,7 +267,7 @@ const WorkflowEngine = () => {
                           </div>
                           {index < workflow.steps.length - 1 && (
                             <div className="flex items-center justify-center my-1 text-muted-foreground">
-                              <ArrowRight className="h-4 w-4" />
+                              <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
                             </div>
                           )}
                         </div>

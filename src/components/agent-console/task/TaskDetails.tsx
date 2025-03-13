@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Task } from "@/types/task";
 import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -32,7 +31,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
   const [requiresHumanIntervention, setRequiresHumanIntervention] = useState(
     task.requires_human_intervention || false
   );
-  const [humanInterventionType, setHumanInterventionType] = useState(
+  const [humanInterventionType, setHumanInterventionType] = useState<Task['human_intervention_type']>(
     task.human_intervention_type || "review"
   );
   const { toast } = useToast();
@@ -47,7 +46,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
     
     // 人間介入タイプの更新
     if (name === "human_intervention_type") {
-      setHumanInterventionType(value);
+      setHumanInterventionType(value as Task['human_intervention_type']);
     }
   };
 
@@ -155,7 +154,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
                 <select
                   id="human_intervention_type"
                   className="w-full mt-1 rounded-md border border-input px-3 py-1 text-sm"
-                  value={humanInterventionType}
+                  value={humanInterventionType || "review"}
                   onChange={(e) => handleSelectChange("human_intervention_type", e.target.value)}
                 >
                   <option value="review">要確認（レビュー）</option>

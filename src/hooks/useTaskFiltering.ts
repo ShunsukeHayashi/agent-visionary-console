@@ -13,7 +13,9 @@ export const useTaskFiltering = (tasks: Task[] | null) => {
     
     return tasks
       .filter(task => {
-        const matchesSearch = task.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        // Search in both title and name fields
+        const taskName = task.name || task.title || '';
+        const matchesSearch = taskName.toLowerCase().includes(searchTerm.toLowerCase()) || 
                              task.id.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === "all" || task.status === statusFilter;
         return matchesSearch && matchesStatus;

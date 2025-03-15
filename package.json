@@ -10,8 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "db:insert-agents": "node supabase/scripts/insert_default_agents.js",
-    "start": "node server.js",
-    "heroku-postbuild": "npm run build"
+    "start": "node server.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

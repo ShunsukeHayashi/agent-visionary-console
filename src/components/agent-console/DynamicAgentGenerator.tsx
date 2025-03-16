@@ -8,6 +8,8 @@ import { Sparkles, Loader2, Brain, Terminal } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import AgentThinkingProcess from "./AgentThinkingProcess";
 import AgentGenerationSequence from "./command/AgentGenerationSequence";
+import { generateAgent } from "@/services/agentService";
+import { useToast } from "@/hooks/use-toast";
 
 interface DynamicAgentGeneratorProps {
   onAgentGenerated: (agentData: any) => void;
@@ -23,6 +25,8 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
   const [useCommandSequence, setUseCommandSequence] = useState(false);
   const [thinkingMode, setThinkingMode] = useState(false);
   const [commandMode, setCommandMode] = useState(false);
+  
+  const { toast } = useToast();
   
   const handleGenerate = async () => {
     if (!goal.trim()) return;
@@ -40,30 +44,22 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
     setIsGenerating(true);
     
     try {
-      // 実際のプロダクションでは、AIサービスとの連携が必要です
-      // ここではモックデータを使用します
-      await new Promise(resolve => setTimeout(resolve, 1800));
-      
-      const goalWords = goal.split(" ");
-      const agentType = goalWords.includes("データ") ? "data" : 
-                       goalWords.includes("文書") ? "document" :
-                       goalWords.includes("コード") ? "development" : "dynamic";
-      
-      const generatedAgent = {
-        name: `AI ${goal.split(" ").slice(0, 2).join(" ")}`,
-        type: agentType,
-        description: goal,
-        dynamicGeneration: true,
-        elementChain: useElementChain,
-        skills: [
-          { name: "Natural Language Processing", level: 85 },
-          { name: "Goal-Oriented Task Execution", level: 90 }
-        ],
-      };
+      // Use the new agent service to generate an agent
+      const generatedAgent = await generateAgent({
+        goal,
+        useElementChain,
+        useThinkingProcess: false
+      });
       
       onAgentGenerated(generatedAgent);
     } catch (error) {
       console.error("Error generating agent:", error);
+      // Show error toast
+      toast({
+        title: "エラーが発生しました",
+        description: "エージェントの生成中にエラーが発生しました。",
+        variant: "destructive"
+      });
     } finally {
       setIsGenerating(false);
     }

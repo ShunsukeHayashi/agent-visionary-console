@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { generateAgent, type AgentStep } from "@/services/agentService";
 
 interface AgentThinkingProcessProps {
   onComplete: (steps: any[]) => void;
@@ -34,7 +35,11 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
   const handleGoalSubmit = () => {
     if (goal.trim()) {
       setCurrentMode('backward');
-      setCurrentQuestion(`「${goal}」を達成するためには、直前に何を達成している必要がありますか？`);
+      // Enhance the step-back questioning with more detailed prompts
+      setCurrentQuestion(
+        `「${goal}」を達成するためには、直前に何を達成している必要がありますか？\n` +
+        `具体的なステップと、そのステップに必要なツールや前提条件を考えてください。`
+      );
     }
   };
 

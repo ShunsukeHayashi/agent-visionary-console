@@ -25,6 +25,15 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          {/* agent-consoleへのアクセスをconsoleにリダイレクト */}
+          <Route 
+            path="/agent-console" 
+            element={
+              <ProtectedRoute>
+                <AgentConsole />
+              </ProtectedRoute>
+            } 
+          />
           <Route 
             path="/personal-agent" 
             element={

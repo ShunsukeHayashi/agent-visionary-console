@@ -59,7 +59,7 @@ const DemoLoginButton = () => {
             description: "デモアカウントでログインしました。",
           });
           
-          navigate("/agent-console");
+          navigate("/console");
           return;
         } else if (signInError.message.includes("Email not confirmed")) {
           // メール確認エラーの場合
@@ -82,7 +82,7 @@ const DemoLoginButton = () => {
           description: "デモアカウントでログインしました。",
         });
         
-        navigate("/agent-console");
+        navigate("/console");
       }
     } catch (error: any) {
       console.error("デモログインエラー:", error);

@@ -30,7 +30,7 @@ const LoginForm = ({ email, setEmail, password, setPassword }: LoginFormProps) =
       
       if (error) throw error;
       
-      navigate("/agent-console");
+      navigate("/console");
     } catch (error: any) {
       toast({
         variant: "destructive",

@@ -26,6 +26,7 @@ export type Database = {
           type: string
           updated_at: string | null
           uptime: string | null
+          user_id: string | null
           version: string | null
         }
         Insert: {
@@ -44,6 +45,7 @@ export type Database = {
           type: string
           updated_at?: string | null
           uptime?: string | null
+          user_id?: string | null
           version?: string | null
         }
         Update: {
@@ -62,6 +64,7 @@ export type Database = {
           type?: string
           updated_at?: string | null
           uptime?: string | null
+          user_id?: string | null
           version?: string | null
         }
         Relationships: [
@@ -131,6 +134,7 @@ export type Database = {
           title: string
           tokens: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           content: string
@@ -141,6 +145,7 @@ export type Database = {
           title: string
           tokens?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           content?: string
@@ -151,6 +156,7 @@ export type Database = {
           title?: string
           tokens?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -282,6 +288,7 @@ export type Database = {
           status: string | null
           title: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           client_name?: string | null
@@ -293,6 +300,7 @@ export type Database = {
           status?: string | null
           title: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           client_name?: string | null
@@ -304,6 +312,7 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -314,6 +323,7 @@ export type Database = {
           query: string
           query_embedding: string | null
           results: Json | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -321,6 +331,7 @@ export type Database = {
           query: string
           query_embedding?: string | null
           results?: Json | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -328,6 +339,7 @@ export type Database = {
           query?: string
           query_embedding?: string | null
           results?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -335,6 +347,7 @@ export type Database = {
         Row: {
           assigned_agent_id: string | null
           checkpoint_id: string | null
+          confirmed_at: string | null
           created_at: string | null
           deadline: string | null
           description: string | null
@@ -347,10 +360,12 @@ export type Database = {
           project_id: string | null
           status: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           assigned_agent_id?: string | null
           checkpoint_id?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           deadline?: string | null
           description?: string | null
@@ -363,10 +378,12 @@ export type Database = {
           project_id?: string | null
           status?: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           assigned_agent_id?: string | null
           checkpoint_id?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           deadline?: string | null
           description?: string | null
@@ -379,6 +396,7 @@ export type Database = {
           project_id?: string | null
           status?: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -410,6 +428,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tools: {
+        Row: {
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          link: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon_name: string
+          id?: string
+          link: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          link?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

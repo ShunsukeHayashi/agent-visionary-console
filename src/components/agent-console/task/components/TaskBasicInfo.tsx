@@ -44,70 +44,70 @@ const TaskBasicInfo: React.FC<TaskBasicInfoProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <div className="space-y-2">
         <h3 className="text-lg font-medium">{task.name}</h3>
         <p className="text-sm text-muted-foreground">{task.description || "説明なし"}</p>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">ステータス</p>
+        <div className="space-y-1 bg-muted/10 p-3 rounded-md transition-all hover:bg-muted/20 shadow-sm">
+          <p className="text-xs text-primary/70 font-medium">ステータス</p>
           <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full ${getStatusColor()} mr-2`}></div>
+            <div className={`w-3 h-3 rounded-full ${getStatusColor()} mr-2 animate-pulse-slow`}></div>
             <span className="capitalize">{task.status === "in-progress" ? "進行中" : task.status === "completed" ? "完了" : "保留中"}</span>
           </div>
         </div>
         
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">優先度</p>
+        <div className="space-y-1 bg-muted/10 p-3 rounded-md transition-all hover:bg-muted/20 shadow-sm">
+          <p className="text-xs text-primary/70 font-medium">優先度</p>
           <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full ${getPriorityColor()} mr-2`}></div>
+            <div className={`w-3 h-3 rounded-full ${getPriorityColor()} mr-2 animate-pulse-slow`}></div>
             <span className="capitalize">{task.priority === "high" ? "高" : task.priority === "medium" ? "中" : task.priority === "low" ? "低" : "緊急"}</span>
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">担当エージェント</p>
+      <div className="grid grid-cols-2 gap-4 mt-2">
+        <div className="space-y-1 bg-muted/10 p-3 rounded-md transition-all hover:bg-muted/20 shadow-sm">
+          <p className="text-xs text-primary/70 font-medium">担当エージェント</p>
           <div className="flex items-center">
-            <User className="h-4 w-4 mr-2 text-primary" />
+            <User className="h-4 w-4 mr-2 text-primary animate-pulse-slow" />
             <span>{getAssignedAgentName()}</span>
           </div>
         </div>
         
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">期限</p>
+        <div className="space-y-1 bg-muted/10 p-3 rounded-md transition-all hover:bg-muted/20 shadow-sm">
+          <p className="text-xs text-primary/70 font-medium">期限</p>
           <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-2 text-primary" />
+            <Calendar className="h-4 w-4 mr-2 text-primary animate-pulse-slow" />
             <span>{formatDate(task.deadline)}</span>
           </div>
         </div>
       </div>
       
-      <div className="space-y-1">
-        <p className="text-xs text-muted-foreground">進捗状況</p>
+      <div className="space-y-1 bg-muted/10 p-3 rounded-md transition-all hover:bg-muted/20 shadow-sm mt-2">
+        <p className="text-xs text-primary/70 font-medium">進捗状況</p>
         <div className="flex items-center space-x-2">
           <div className="flex-1 h-2 bg-muted rounded-full">
             <div 
-              className={`h-2 rounded-full ${getStatusColor()}`} 
+              className={`h-2 rounded-full ${getStatusColor()} transition-all`} 
               style={{ width: `${task.progress}%` }}
             ></div>
           </div>
-          <span className="text-sm">{task.progress}%</span>
+          <span className="text-sm font-medium">{task.progress}%</span>
         </div>
       </div>
       
       {/* ヒューマンインザループの表示 */}
       {task.requires_human_intervention && (
-        <div className="rounded-md border bg-muted/20 p-3 mt-2">
+        <div className="rounded-md border border-primary/20 bg-primary/5 p-3 mt-2 shadow-sm hover:shadow-md transition-all animate-fade-in">
           <div className="flex items-center mb-2">
             <HumanTaskIndicator 
               type={task.human_intervention_type as "review" | "approval" | "manual" | "intervention"} 
               size="md"
             />
-            <span className="ml-2 text-sm font-medium">ヒューマンインザループが必要</span>
+            <span className="ml-2 text-sm font-medium text-primary/90">ヒューマンインザループが必要</span>
           </div>
           <p className="text-xs text-muted-foreground">
             このタスクでは人間による介入が必要です。自動処理だけでは完了せず、人間の判断や作業が必要なステップがあります。

@@ -16,6 +16,8 @@ interface StageItemProps {
   onSaveContent: () => void;
   onContentChange: (content: string) => void;
   editedContent: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const StageItem: React.FC<StageItemProps> = ({
@@ -29,6 +31,8 @@ const StageItem: React.FC<StageItemProps> = ({
   onSaveContent,
   onContentChange,
   editedContent,
+  className = "",
+  style,
 }) => {
   const getStageStatusIcon = () => {
     if (content) {
@@ -39,14 +43,15 @@ const StageItem: React.FC<StageItemProps> = ({
 
   return (
     <div 
-      className={`border rounded-md p-3 ${
+      className={`border rounded-md p-3 transition-all hover:shadow-sm ${
         content ? "bg-card" : "bg-muted/20"
-      }`}
+      } ${className}`}
+      style={style}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           {getStageStatusIcon()}
-          <span className="font-medium">{thoughtStageInfo[stage].label}</span>
+          <span className="font-medium text-primary/90">{thoughtStageInfo[stage].label}</span>
         </div>
         
         {!readOnly && (
@@ -55,8 +60,9 @@ const StageItem: React.FC<StageItemProps> = ({
             size="sm"
             onClick={() => onStartEditing(stage)}
             disabled={editingStage !== null}
+            className="transition-all hover:bg-primary/10"
           >
-            <Edit2 className="h-4 w-4" />
+            <Edit2 className="h-4 w-4 text-primary/70" />
           </Button>
         )}
       </div>
@@ -79,6 +85,7 @@ const StageItem: React.FC<StageItemProps> = ({
               size="sm"
               onClick={onCancelEditing}
               disabled={isSaving}
+              className="transition-all hover:bg-muted/20"
             >
               キャンセル
             </Button>
@@ -86,6 +93,7 @@ const StageItem: React.FC<StageItemProps> = ({
               size="sm"
               onClick={onSaveContent}
               disabled={isSaving}
+              className="shadow-sm hover:shadow-md transition-all"
             >
               {isSaving ? "保存中..." : "保存"}
               {isSaving ? null : <Save className="ml-1 h-4 w-4" />}

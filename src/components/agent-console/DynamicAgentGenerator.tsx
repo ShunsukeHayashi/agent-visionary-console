@@ -11,8 +11,17 @@ import AgentGenerationSequence from "./command/AgentGenerationSequence";
 import { generateAgent } from "@/services/agentService";
 import { useToast } from "@/hooks/use-toast";
 
+interface AgentData {
+  name: string;
+  type: string;
+  description: string;
+  dynamicGeneration: boolean;
+  elementChain: boolean;
+  skills: Array<{ name: string; level: number }>;
+}
+
 interface DynamicAgentGeneratorProps {
-  onAgentGenerated: (agentData: any) => void;
+  onAgentGenerated: (agentData: AgentData) => void;
 }
 
 const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
@@ -65,7 +74,13 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
     }
   };
   
-  const handleThinkingProcessComplete = (steps: any[]) => {
+  interface ThinkingStep {
+    id: string;
+    content: string;
+    completed: boolean;
+  }
+  
+  const handleThinkingProcessComplete = (steps: ThinkingStep[]) => {
     setThinkingMode(false);
     setIsGenerating(true);
     

@@ -129,64 +129,74 @@ const AgentGenerationSequence: React.FC<AgentGenerationSequenceProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
       <div>
-        <Card className="p-4">
+        <Card className="p-4 shadow-elevation transition-all hover:shadow-card">
           <h3 className="text-lg font-medium mb-4 flex items-center">
-            <BrainCircuit className="h-5 w-5 mr-2 text-primary" />
+            <BrainCircuit className="h-5 w-5 mr-2 text-primary animate-pulse-slow" />
             コンテキスト入力
           </h3>
           
           <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-1 block">
-                目標 <span className="text-red-500">*</span>
+            <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+              <label className="text-sm font-medium mb-1 block flex items-center">
+                目標 <span className="text-red-500 ml-1">*</span>
+                <span className="ml-auto text-xs text-muted-foreground">必須</span>
               </label>
               <Textarea
                 value={contextData.goal}
                 onChange={(e) => updateContext("goal", e.target.value)}
                 placeholder="エージェントの達成目標を入力してください"
-                className="h-20 resize-none"
+                className="h-20 resize-none transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70"
               />
             </div>
             
-            <div>
-              <label className="text-sm font-medium mb-1 block">スキル</label>
+            <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+              <label className="text-sm font-medium mb-1 block flex items-center">
+                <span>スキル</span>
+                <span className="ml-auto text-xs text-muted-foreground">オプション</span>
+              </label>
               <Textarea
                 value={contextData.skills}
                 onChange={(e) => updateContext("skills", e.target.value)}
                 placeholder="必要なスキルをカンマ区切りで入力してください"
-                className="h-20 resize-none"
+                className="h-20 resize-none transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70"
               />
             </div>
             
-            <div>
-              <label className="text-sm font-medium mb-1 block">タスク</label>
+            <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+              <label className="text-sm font-medium mb-1 block flex items-center">
+                <span>タスク</span>
+                <span className="ml-auto text-xs text-muted-foreground">オプション</span>
+              </label>
               <Textarea
                 value={contextData.tasks}
                 onChange={(e) => updateContext("tasks", e.target.value)}
                 placeholder="実行すべきタスクを入力してください"
-                className="h-20 resize-none"
+                className="h-20 resize-none transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70"
               />
             </div>
             
-            <div>
-              <label className="text-sm font-medium mb-1 block">ワークフロー</label>
+            <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
+              <label className="text-sm font-medium mb-1 block flex items-center">
+                <span>ワークフロー</span>
+                <span className="ml-auto text-xs text-muted-foreground">オプション</span>
+              </label>
               <Textarea
                 value={contextData.workflow}
                 onChange={(e) => updateContext("workflow", e.target.value)}
                 placeholder="タスクの実行順序を入力してください"
-                className="h-20 resize-none"
+                className="h-20 resize-none transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70"
               />
             </div>
           </div>
         </Card>
         
         {isComplete && (
-          <Card className="p-4 mt-4 border-green-200 bg-green-50">
+          <Card className="p-4 mt-4 border-green-200 bg-green-50/80 shadow-sm animate-fade-in">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-medium flex items-center text-green-700">
-                <ListChecks className="h-5 w-5 mr-2 text-green-600" />
+                <ListChecks className="h-5 w-5 mr-2 text-green-600 animate-bounce-slow" />
                 生成準備完了
               </h3>
               
@@ -194,7 +204,7 @@ const AgentGenerationSequence: React.FC<AgentGenerationSequenceProps> = ({
                 onClick={generateAgent}
                 disabled={isGenerating}
                 size="sm"
-                className="flex items-center"
+                className="flex items-center shadow-sm hover:shadow-md transition-all"
               >
                 {isGenerating ? (
                   <>
@@ -210,17 +220,19 @@ const AgentGenerationSequence: React.FC<AgentGenerationSequenceProps> = ({
               </Button>
             </div>
             
-            <p className="text-sm text-green-600">
+            <p className="text-sm text-green-600 bg-green-100/50 p-2 rounded-md">
               すべてのコマンドが実行され、エージェント生成の準備が整いました。
             </p>
           </Card>
         )}
       </div>
       
-      <CommandSequence 
-        initialCommands={commands} 
-        onSequenceComplete={handleSequenceComplete} 
-      />
+      <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+        <CommandSequence 
+          initialCommands={commands} 
+          onSequenceComplete={handleSequenceComplete} 
+        />
+      </div>
     </div>
   );
 };

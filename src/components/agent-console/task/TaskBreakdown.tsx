@@ -99,36 +99,36 @@ const TaskBreakdown: React.FC<TaskBreakdownProps> = ({
   const completionPercentage = (getCompletedStagesCount() / stageOrder.length) * 100;
 
   return (
-    <div className="border rounded-md p-4 mb-4">
+    <div className="border rounded-md p-4 mb-4 shadow-sm hover:shadow-elevation transition-all animate-fade-in">
       <Collapsible
         open={isExpanded}
         onOpenChange={setIsExpanded}
       >
         <CollapsibleTrigger asChild>
-          <div className="flex items-center justify-between cursor-pointer">
+          <div className="flex items-center justify-between cursor-pointer hover:bg-muted/20 p-2 rounded-md transition-all">
             <div className="flex items-center gap-2">
               <h3 className="text-md font-medium">思考プロセスの分解</h3>
-              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded shadow-sm">
                 {getCompletedStagesCount()}/{stageOrder.length} 完了
               </span>
             </div>
             <div className="flex items-center gap-2">
               <ProgressBar value={getCompletedStagesCount()} max={stageOrder.length} />
               {isExpanded ? 
-                <ChevronUp className="h-5 w-5 text-muted-foreground" /> : 
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                <ChevronUp className="h-5 w-5 text-primary/70 transition-transform duration-200" /> : 
+                <ChevronDown className="h-5 w-5 text-primary/70 transition-transform duration-200" />
               }
             </div>
           </div>
         </CollapsibleTrigger>
         
-        <CollapsibleContent className="mt-4 space-y-4">
-          <div className="text-sm text-muted-foreground mb-4">
-            シュンスケ式思考プロセスフレームワーク G → Def → [Scn || Ctx] ⇒ Fn → Impl → TC ⇒ [Val && Deply] → Result に基づき、
+        <CollapsibleContent className="mt-4 space-y-4 animate-slide-up">
+          <div className="text-sm text-muted-foreground mb-4 p-3 bg-muted/10 rounded-md border border-muted/20">
+            シュンスケ式思考プロセスフレームワーク G → Def → Scn/Ctx → Fn → Impl → TC → Val/Deply → Result に基づき、
             タスクを体系的に分解します。
           </div>
           
-          {stageOrder.map((stage) => (
+          {stageOrder.map((stage, index) => (
             <StageItem
               key={stage}
               stage={stage}
@@ -141,6 +141,8 @@ const TaskBreakdown: React.FC<TaskBreakdownProps> = ({
               onSaveContent={saveStageContent}
               onContentChange={setEditedContent}
               editedContent={editedContent}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 50}ms` }}
             />
           ))}
         </CollapsibleContent>

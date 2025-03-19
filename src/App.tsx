@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import PersonalAgentPage from "./pages/PersonalAgent";
+import ToolsPage from "./pages/Tools";
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PersonalAgentPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tools" 
+            element={
+              <ProtectedRoute>
+                <ToolsPage />
               </ProtectedRoute>
             } 
           />

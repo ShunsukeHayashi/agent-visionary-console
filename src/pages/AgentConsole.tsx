@@ -11,10 +11,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/Button";
 import { Wrench, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { CreateAgentForm } from "@/components/agent-console/CreateAgentForm";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const AgentConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showToolsPanel, setShowToolsPanel] = useState(false);
+  const [isCreateAgentDialogOpen, setIsCreateAgentDialogOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
@@ -23,6 +26,11 @@ const AgentConsole = () => {
 
   const toggleToolsPanel = () => {
     setShowToolsPanel(!showToolsPanel);
+  };
+
+  const handleCreateAgentSubmit = (values: any) => {
+    console.log("Agent creation values:", values);
+    setIsCreateAgentDialogOpen(false);
   };
 
   return (
@@ -40,6 +48,13 @@ const AgentConsole = () => {
                   <h1 className="text-2xl md:text-3xl font-bold">AI Agent Console</h1>
                 </div>
                 <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="primary" 
+                    onClick={() => setIsCreateAgentDialogOpen(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    新規エージェント作成
+                  </Button>
                   <Button
                     variant="outline"
                     size={isMobile ? "sm" : "default"}
@@ -98,6 +113,16 @@ const AgentConsole = () => {
         </ScrollArea>
         <Footer />
       </main>
+
+      {/* Create Agent Dialog */}
+      <Dialog open={isCreateAgentDialogOpen} onOpenChange={setIsCreateAgentDialogOpen}>
+        <DialogContent className={`${isMobile ? 'w-[95vw] max-w-none p-4' : 'sm:max-w-[550px]'}`}>
+          <CreateAgentForm
+            onSubmit={handleCreateAgentSubmit}
+            onCancel={() => setIsCreateAgentDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

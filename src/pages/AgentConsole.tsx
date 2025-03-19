@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/Button";
 import { Wrench, Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { CreateAgentForm } from "@/components/agent-console/CreateAgentForm";
+import CreateAgentForm from "@/components/agent-console/CreateAgentForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const AgentConsole = () => {

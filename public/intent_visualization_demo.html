@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visionary Console - Intent Visualization Demo</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+      line-height: 1.5;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 1rem;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .input-section {
+      margin-bottom: 1.5rem;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid #d1d5db;
+      margin-top: 0.5rem;
+      font-family: inherit;
+      resize: none;
+    }
+    button {
+      background-color: #4f46e5;
+      color: white;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+    }
+    button:hover {
+      background-color: #4338ca;
+    }
+    button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .visualization {
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .visualization-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+    .visualization-content {
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      border-radius: 0.375rem;
+      padding: 1rem;
+      background-color: rgba(79, 70, 229, 0.05);
+    }
+    .border-markers {
+      font-family: monospace;
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .content {
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>ビジョナリーコンソール - Intent Visualization Demo</h1>
+    </div>
+    
+    <div class="input-section">
+      <label for="user-input">User Input</label>
+      <textarea id="user-input" placeholder="Enter user request or query..."></textarea>
+      <div style="margin-top: 1rem;">
+        <button id="analyze-btn" onclick="analyzeIntent()">Analyze Intent</button>
+      </div>
+    </div>
+    
+    <div id="analysis-results" style="display: none;">
+      <!-- Input Visualization -->
+      <div class="visualization">
+        <div class="visualization-label">User Input</div>
+        <div class="visualization-content">
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+          <div id="input-content" class="content"></div>
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+        </div>
+      </div>
+      
+      <!-- Intent Visualization -->
+      <div class="visualization">
+        <div class="visualization-label">Intent Analysis</div>
+        <div class="visualization-content">
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+          <div class="content">
+            [Input] → [User Intent] → [Intent](Understand, Analyze, Visualize, Implement, Test, Deploy)
+            [Input] → [User Intent] → [Want or need Intent](Create, Visualize, Format, Display, Integrate)
+          </div>
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+        </div>
+      </div>
+      
+      <!-- Goal Visualization -->
+      <div class="visualization">
+        <div class="visualization-label">Fixed Goal</div>
+        <div class="visualization-content">
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+          <div class="content">
+            [Fixed User want intent] = Def Fixed Goal: Create a visualization component for intent analysis with ◤◢◤◢ border markers
+          </div>
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+        </div>
+      </div>
+      
+      <!-- Task Visualization -->
+      <div class="visualization">
+        <div class="visualization-label">Task Breakdown</div>
+        <div class="visualization-content">
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+          <div class="content">
+            Achieve Goal == Need Tasks[Goal]=[Tasks]
+            1. Create IntentVisualization component
+            2. Implement border marker formatting
+            3. Support different content types
+            4. Integrate with existing Working Backwards methodology
+            5. Test with various inputs
+            6. Document usage and examples
+          </div>
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+        </div>
+      </div>
+      
+      <!-- Agent Visualization -->
+      <div class="visualization">
+        <div class="visualization-label">Agent Assignment</div>
+        <div class="visualization-content">
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+          <div class="content">
+            To Do Task Execute:
+            - Need Prompt: "Create visualization component with border markers"
+            - Need Tools: React, TypeScript, TailwindCSS
+            - Assign Agent: UI Development Agent
+            
+            Agent Task Execute Feedback loop:
+            1. Create component → Review → Refine
+            2. Test integration → Review → Adjust
+            3. Document usage → Review → Finalize
+          </div>
+          <div class="border-markers">◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function analyzeIntent() {
+      const userInput = document.getElementById('user-input').value.trim();
+      if (!userInput) return;
+      
+      document.getElementById('input-content').textContent = userInput;
+      document.getElementById('analysis-results').style.display = 'block';
+    }
+    
+    // Enable/disable analyze button based on input
+    document.getElementById('user-input').addEventListener('input', function() {
+      const analyzeBtn = document.getElementById('analyze-btn');
+      analyzeBtn.disabled = !this.value.trim();
+    });
+    
+    // Initialize button state
+    document.getElementById('analyze-btn').disabled = true;
+  </script>
+</body>
+</html>

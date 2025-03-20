@@ -54,21 +54,22 @@ const CommandSequence: React.FC<CommandSequenceProps> = ({
   };
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 shadow-elevation transition-all hover:shadow-card">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
-          <ListOrdered className="h-5 w-5 mr-2 text-primary" />
+          <ListOrdered className="h-5 w-5 mr-2 text-primary animate-pulse-slow" />
           <h3 className="text-lg font-medium">コマンドシーケンス</h3>
         </div>
-        <Badge variant="outline" className="flex items-center">
+        <Badge variant="outline" className="flex items-center bg-primary/5">
           <Sparkles className="h-3 w-3 mr-1 text-primary" />
-          {executedCommands.length}/{commands.length}ステップ
+          <span className="font-medium">{executedCommands.length}/{commands.length}</span>
+          <span className="ml-1 text-xs">ステップ</span>
         </Badge>
       </div>
       
-      <Progress value={progress} className="h-2 mb-4" />
+      <Progress value={progress} className="h-2 mb-4 transition-all" />
       
-      <ScrollArea className="h-[320px] pr-3">
+      <ScrollArea className="h-[320px] pr-3 thin-scrollbar">
         <div className="space-y-2">
           {commands.map((command, index) => (
             <CommandButton
@@ -77,21 +78,30 @@ const CommandSequence: React.FC<CommandSequenceProps> = ({
               isActive={index === activeCommandIndex}
               isNext={index === activeCommandIndex}
               onExecute={() => executeCommand(command.id)}
+              className="animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
             />
           ))}
         </div>
       </ScrollArea>
       
       {contextChain.length > 0 && (
-        <div className="mt-4 pt-4 border-t">
+        <div className="mt-4 pt-4 border-t animate-fade-in">
           <div className="flex items-center mb-2">
-            <ArrowDownCircle className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground font-medium">
+            <ArrowDownCircle className="h-4 w-4 mr-2 text-primary/70 animate-pulse-slow" />
+            <span className="text-sm font-medium text-primary/80">
               コンテキストチェーン
             </span>
           </div>
-          <div className="text-sm text-muted-foreground">
-            {contextChain.join(" → ")}
+          <div className="p-2 bg-primary/5 rounded-md border border-primary/10 text-sm">
+            {contextChain.map((context, index) => (
+              <React.Fragment key={index}>
+                <span className="font-medium">{context}</span>
+                {index < contextChain.length - 1 && (
+                  <span className="mx-2 text-muted-foreground">→</span>
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
       )}

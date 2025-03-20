@@ -36,13 +36,17 @@ interface CommandButtonProps {
   isActive: boolean;
   isNext: boolean;
   onExecute: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const CommandButton: React.FC<CommandButtonProps> = ({
   command,
   isActive,
   isNext,
-  onExecute
+  onExecute,
+  className = "",
+  style
 }) => {
   const getIcon = () => {
     // Tool関連のアイコン
@@ -72,14 +76,16 @@ const CommandButton: React.FC<CommandButtonProps> = ({
       variant={isActive ? "default" : isNext ? "outline" : "ghost"}
       size="sm"
       className={`
-        w-full justify-start mb-2 text-left
-        ${isActive ? "bg-primary text-primary-foreground" : ""}
-        ${isNext ? "border-primary border-dashed text-primary" : ""}
-        ${!isActive && !isNext ? "opacity-70" : ""}
+        w-full justify-start mb-2 text-left transition-all
+        ${isActive ? "bg-primary text-primary-foreground shadow-sm" : ""}
+        ${isNext ? "border-primary border-dashed text-primary hover:bg-primary/10" : ""}
+        ${!isActive && !isNext ? "opacity-70 hover:opacity-100" : ""}
         ${command.isToolCommand ? "border-l-4 border-l-blue-500" : ""}
+        ${className}
       `}
       onClick={onExecute}
       disabled={!isActive && !isNext}
+      style={style}
     >
       <div className="flex items-center w-full">
         {getIcon()}

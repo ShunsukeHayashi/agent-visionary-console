@@ -103,12 +103,12 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
 
   if (commandMode) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-fade-in">
         <Button 
           variant="outline" 
           size="sm" 
           onClick={handleCommandBack}
-          className="mb-4"
+          className="mb-4 transition-all hover:bg-primary/5 hover:border-primary/30"
         >
           ← 戻る
         </Button>
@@ -118,27 +118,27 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
   }
   
   return (
-    <Card className="p-5 border border-dashed border-primary/50 bg-primary/5">
+    <Card className="p-5 border border-dashed border-primary/50 bg-primary/5 animate-fade-in">
       <h3 className="text-lg font-medium mb-3 flex items-center">
-        <Sparkles className="h-4 w-4 mr-2 text-primary" />
+        <Sparkles className="h-4 w-4 mr-2 text-primary animate-pulse-slow" />
         ゴールからエージェントを生成
       </h3>
       
       <div className="space-y-4">
         <div>
-          <Label htmlFor="goal-input">達成したい目標</Label>
+          <Label htmlFor="goal-input" className="text-sm font-medium mb-1 block">達成したい目標</Label>
           <Textarea
             id="goal-input"
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             placeholder="例: データを分析して週次レポートを自動生成する、顧客からの問い合わせに自動応答する..."
-            className="h-32 resize-none mt-1"
+            className="h-32 resize-none mt-1 transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70"
           />
         </div>
         
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
           <div className="space-y-0.5">
-            <Label htmlFor="element-chain">Element Chain 実行</Label>
+            <Label htmlFor="element-chain" className="font-medium">Element Chain 実行</Label>
             <p className="text-sm text-muted-foreground">
               タスクを要素単位に分解して順次実行します
             </p>
@@ -147,12 +147,13 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
             id="element-chain"
             checked={useElementChain}
             onCheckedChange={setUseElementChain}
+            className="data-[state=checked]:bg-primary"
           />
         </div>
         
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
           <div className="space-y-0.5">
-            <Label htmlFor="thinking-process">逆算思考プロセス</Label>
+            <Label htmlFor="thinking-process" className="font-medium">逆算思考プロセス</Label>
             <p className="text-sm text-muted-foreground">
               Working Backwards手法で逆算的に思考ステップを生成します
             </p>
@@ -164,12 +165,13 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
               setUseThinkingProcess(checked);
               if (checked) setUseCommandSequence(false);
             }}
+            className="data-[state=checked]:bg-primary"
           />
         </div>
 
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3">
+        <div className="flex flex-row items-center justify-between rounded-lg border p-3 transition-all hover:border-primary/30 hover:bg-primary/5">
           <div className="space-y-0.5">
-            <Label htmlFor="command-sequence">コマンドシーケンス</Label>
+            <Label htmlFor="command-sequence" className="font-medium">コマンドシーケンス</Label>
             <p className="text-sm text-muted-foreground">
               順番にコマンドを実行してコンテキストをつなぎ合わせます
             </p>
@@ -181,32 +183,33 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
               setUseCommandSequence(checked);
               if (checked) setUseThinkingProcess(false);
             }}
+            className="data-[state=checked]:bg-primary"
           />
         </div>
         
         {useThinkingProcess && (
-          <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 flex items-start">
-            <Brain className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
+          <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 flex items-start animate-fade-in shadow-sm">
+            <Brain className="h-5 w-5 text-blue-500 mr-2 mt-0.5 animate-pulse-slow" />
             <div>
               <p className="text-sm text-blue-700">
                 逆算思考プロセスを使用すると、ゴールから逆方向に「Step-back質問法」を用いてステップを導き出します。
               </p>
               <p className="text-sm text-blue-600 mt-1">
-                F(Achieve goal) = ∫ Agent(LLM, R&R, Tools) × Step-back questions → 最終Result
+                F(Achieve goal) = Agent(LLM, R&R, Tools) + Step-back questions → 最終Result
               </p>
             </div>
           </div>
         )}
 
         {useCommandSequence && (
-          <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 flex items-start">
-            <Terminal className="h-5 w-5 text-indigo-500 mr-2 mt-0.5" />
+          <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 flex items-start animate-fade-in shadow-sm">
+            <Terminal className="h-5 w-5 text-indigo-500 mr-2 mt-0.5 animate-pulse-slow" />
             <div>
               <p className="text-sm text-indigo-700">
                 コマンドシーケンスを使用すると、各ステップを順番に実行しながらコンテキストを積み上げていきます。
               </p>
               <p className="text-sm text-indigo-600 mt-1">
-                Context = Command₁ → Command₂ → ... → Commandₙ = ∑ Commands(i)
+                Context = Command₁ → Command₂ → ... → Commandₙ = Sum Commands(i)
               </p>
             </div>
           </div>
@@ -216,7 +219,7 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
           <Button 
             onClick={handleGenerate}
             disabled={!goal.trim() || isGenerating}
-            className="flex items-center"
+            className="flex items-center transition-all shadow-sm hover:shadow-md"
           >
             {isGenerating ? (
               <>
@@ -227,19 +230,19 @@ const DynamicAgentGenerator: React.FC<DynamicAgentGeneratorProps> = ({
               <>
                 {useThinkingProcess && (
                   <>
-                    <Brain className="h-4 w-4 mr-2" />
+                    <Brain className="h-4 w-4 mr-2 animate-pulse-slow" />
                     思考プロセスを開始
                   </>
                 )}
                 {useCommandSequence && (
                   <>
-                    <Terminal className="h-4 w-4 mr-2" />
+                    <Terminal className="h-4 w-4 mr-2 animate-pulse-slow" />
                     コマンドシーケンスを開始
                   </>
                 )}
                 {!useThinkingProcess && !useCommandSequence && (
                   <>
-                    <Sparkles className="h-4 w-4 mr-2" />
+                    <Sparkles className="h-4 w-4 mr-2 animate-pulse-slow" />
                     エージェントを生成
                   </>
                 )}

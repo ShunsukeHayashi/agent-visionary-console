@@ -17,11 +17,13 @@ import { generateAgent, type AgentStep } from "@/services/agentService";
 interface AgentThinkingProcessProps {
   onComplete: (steps: any[]) => void;
   initialGoal: string;
+  className?: string;
 }
 
 const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({ 
   onComplete, 
-  initialGoal 
+  initialGoal,
+  className = ""
 }) => {
   const [goal, setGoal] = useState(initialGoal);
   const [currentMode, setCurrentMode] = useState<'goal' | 'backward' | 'forward' | 'result' | 'flowchart'>('goal');
@@ -93,61 +95,42 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="p-4 border-primary/30">
+    <div className={`space-y-6 animate-fade-in ${className}`}>
+      <Card className="p-4 border-primary/30 shadow-elevation">
         <div className="mb-4 flex items-center space-x-2">
-          <BrainCircuit className="text-primary h-5 w-5" />
+          <BrainCircuit className="text-primary h-5 w-5 animate-pulse-slow" />
           <h2 className="text-lg font-medium">
             思考エージェント - Working Backwardsプロセス
           </h2>
         </div>
         
         <div className="space-y-4">
-          <div className="flex justify-between bg-background/50 p-2 rounded-md">
-            <div 
-              className={`py-1 px-3 rounded-md flex items-center gap-1 ${
-                currentMode === 'goal' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
-              }`}
-            >
-              <BrainCircuit className="h-4 w-4" />
-              <span className="text-xs font-medium">ゴール設定</span>
-            </div>
-            <div 
-              className={`py-1 px-3 rounded-md flex items-center gap-1 ${
-                currentMode === 'backward' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
-              }`}
-            >
-              <ArrowBigLeftDash className="h-4 w-4" />
-              <span className="text-xs font-medium">逆算ステップ</span>
-            </div>
-            <div 
-              className={`py-1 px-3 rounded-md flex items-center gap-1 ${
-                currentMode === 'forward' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
-              }`}
-            >
-              <ArrowBigRightDash className="h-4 w-4" />
-              <span className="text-xs font-medium">順方向再整理</span>
-            </div>
-            <div 
-              className={`py-1 px-3 rounded-md flex items-center gap-1 ${
-                currentMode === 'result' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
-              }`}
-            >
-              <Check className="h-4 w-4" />
-              <span className="text-xs font-medium">統合結果</span>
-            </div>
-            <div 
-              className={`py-1 px-3 rounded-md flex items-center gap-1 ${
-                currentMode === 'flowchart' ? 'bg-primary text-primary-foreground' : 'bg-muted/30'
-              }`}
-            >
-              <GitBranch className="h-4 w-4" />
-              <span className="text-xs font-medium">フローチャート</span>
-            </div>
+          <div className="flex justify-between bg-background/50 p-2 rounded-md overflow-x-auto thin-scrollbar">
+            {['goal', 'backward', 'forward', 'result', 'flowchart'].map((mode) => (
+              <div 
+                key={mode}
+                className={`py-1 px-3 rounded-md flex items-center gap-1 transition-all ${
+                  currentMode === mode ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/30 hover:bg-muted/50'
+                }`}
+              >
+                {mode === 'goal' && <BrainCircuit className="h-4 w-4" />}
+                {mode === 'backward' && <ArrowBigLeftDash className="h-4 w-4" />}
+                {mode === 'forward' && <ArrowBigRightDash className="h-4 w-4" />}
+                {mode === 'result' && <Check className="h-4 w-4" />}
+                {mode === 'flowchart' && <GitBranch className="h-4 w-4" />}
+                <span className="text-xs font-medium">
+                  {mode === 'goal' && 'ゴール設定'}
+                  {mode === 'backward' && '逆算ステップ'}
+                  {mode === 'forward' && '順方向再整理'}
+                  {mode === 'result' && '統合結果'}
+                  {mode === 'flowchart' && 'フローチャート'}
+                </span>
+              </div>
+            ))}
           </div>
           
           {currentMode === 'goal' && (
-            <div className="space-y-3">
+            <div className="space-y-3 animate-fade-in">
               <div>
                 <label className="block text-sm font-medium mb-1">最終ゴール</label>
                 <div className="flex gap-2">
@@ -156,9 +139,13 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
                     placeholder="例: noteで月間100万円を稼ぐ"
-                    className="w-full p-2 text-base border rounded-md"
+                    className="w-full p-2 text-base border rounded-md transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70 focus:outline-none"
                   />
-                  <Button onClick={handleGoalSubmit} disabled={!goal.trim()}>
+                  <Button 
+                    onClick={handleGoalSubmit} 
+                    disabled={!goal.trim()}
+                    className="shadow-sm hover:shadow-md transition-all"
+                  >
                     設定
                   </Button>
                 </div>
@@ -167,10 +154,10 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
           )}
           
           {currentMode === 'backward' && (
-            <div className="space-y-3">
+            <div className="space-y-3 animate-fade-in">
               <div>
-                <div className="p-3 bg-primary/5 rounded-md mb-3">
-                  <p className="text-sm font-medium">Step-back質問:</p>
+                <div className="p-3 bg-primary/5 rounded-md mb-3 shadow-sm border border-primary/10">
+                  <p className="text-sm font-medium text-primary/80">Step-back質問:</p>
                   <p className="text-base">{currentQuestion}</p>
                 </div>
                 
@@ -180,21 +167,28 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
                     value={newStep}
                     onChange={(e) => setNewStep(e.target.value)}
                     placeholder="ステップを入力..."
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md transition-all focus:border-primary/70 focus:ring-1 focus:ring-primary/70 focus:outline-none"
                   />
-                  <Button onClick={addBackwardStep} disabled={!newStep.trim()}>
+                  <Button 
+                    onClick={addBackwardStep} 
+                    disabled={!newStep.trim()}
+                    className="shadow-sm hover:shadow-md transition-all"
+                  >
                     追加
                   </Button>
                 </div>
               </div>
               
               {backwardSteps.length > 0 && (
-                <div>
+                <div className="animate-slide-up">
                   <label className="block text-sm font-medium mb-1">逆算ステップ Z → A</label>
-                  <ul className="space-y-2 max-h-60 overflow-y-auto p-2 border rounded-md">
+                  <ul className="space-y-2 max-h-60 overflow-y-auto p-2 border rounded-md thin-scrollbar">
                     {backwardSteps.map((step, index) => (
-                      <li key={step.id} className="p-2 bg-background/80 rounded-md flex items-center">
-                        <span className="font-medium mr-2">
+                      <li 
+                        key={step.id} 
+                        className="p-2 bg-background/80 rounded-md flex items-center transition-all hover:bg-primary/5 hover:shadow-sm"
+                      >
+                        <span className="font-medium mr-2 text-primary">
                           {String.fromCharCode(90 - index)}:
                         </span>
                         <span>{step.content}</span>
@@ -205,7 +199,7 @@ const AgentThinkingProcess: React.FC<AgentThinkingProcessProps> = ({
                   {backwardSteps.length >= 2 && (
                     <Button 
                       variant="outline" 
-                      className="mt-2" 
+                      className="mt-2 transition-all hover:bg-primary/10 hover:border-primary/30" 
                       onClick={finishBackwardSteps}
                     >
                       逆算完了 - 順方向に整理する

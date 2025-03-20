@@ -16,7 +16,8 @@ import {
   BarChart,
   Image,
   Star,
-  RefreshCw
+  RefreshCw,
+  Wrench
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -263,13 +264,16 @@ const AgentStatusBoard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <DashboardCard>
+          <DashboardCard className="shadow-elevation transition-all hover:shadow-card">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-semibold">Agent Status Board</h2>
-              <Button variant="primary" onClick={createNewAgent}>
+              <h2 className="text-lg font-semibold flex items-center">
+                <UserCheck className="h-5 w-5 mr-2 text-primary animate-pulse-slow" />
+                Agent Status Board
+              </h2>
+              <Button variant="primary" onClick={createNewAgent} className="shadow-sm hover:shadow-md transition-all">
                 <Plus className="h-4 w-4 mr-2" />
                 New Agent
               </Button>
@@ -278,21 +282,22 @@ const AgentStatusBoard = () => {
             <div className="overflow-x-auto -mx-6">
               <table className="min-w-full border-collapse">
                 <thead>
-                  <tr className="border-b border-border/50 text-left">
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Agent ID</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Current Task</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Performance</th>
-                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+                  <tr className="border-b border-border/50 text-left bg-muted/10">
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Agent ID</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Current Task</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Performance</th>
+                    <th className="px-6 py-3 text-xs font-medium text-primary/80 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/50">
-                  {agents.map((agent) => (
+                  {agents.map((agent, index) => (
                     <tr 
                       key={agent.id} 
-                      className="group hover:bg-muted/30 transition-colors cursor-pointer"
+                      className="group hover:bg-primary/5 transition-all cursor-pointer animate-fade-in"
+                      style={{ animationDelay: `${index * 50}ms` }}
                       onClick={() => viewAgentDetails(agent)}
                     >
                       <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">{agent.id}</td>
@@ -362,16 +367,21 @@ const AgentStatusBoard = () => {
 
         <div>
           {selectedAgent ? (
-            <DashboardCard className="h-full">
+            <DashboardCard className="h-full shadow-elevation transition-all hover:shadow-card">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-semibold">Agent Details</h2>
-                <span className="text-xs px-2 py-1 rounded-full bg-muted">v{selectedAgent.version}</span>
+                <h2 className="text-lg font-semibold flex items-center">
+                  <Database className="h-5 w-5 mr-2 text-primary animate-pulse-slow" />
+                  Agent Details
+                </h2>
+                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">v{selectedAgent.version}</span>
               </div>
               
               <div className="space-y-6">
-                <div className="flex items-center">
-                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                    {getAgentTypeIcon(selectedAgent.type)}
+                <div className="flex items-center animate-fade-in">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mr-4 shadow-sm">
+                    <div className="h-8 w-8 text-primary animate-pulse-slow">
+                      {getAgentTypeIcon(selectedAgent.type)}
+                    </div>
                   </div>
                   <div>
                     <h3 className="text-xl font-medium">{selectedAgent.name}</h3>
@@ -379,53 +389,63 @@ const AgentStatusBoard = () => {
                   </div>
                 </div>
                 
-                <div>
-                  <h4 className="text-sm font-medium mb-3">Agent Status</h4>
+                <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+                  <h4 className="text-sm font-medium mb-3 flex items-center">
+                    <Clock className="h-4 w-4 mr-2 text-primary" />
+                    Agent Status
+                  </h4>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-muted/30 p-3 rounded-md">
-                      <p className="text-xs text-muted-foreground">Status</p>
+                    <div className="bg-muted/30 p-3 rounded-md shadow-sm hover:shadow-md transition-all hover:bg-primary/5">
+                      <p className="text-xs text-primary/70 font-medium">Status</p>
                       <div className="flex items-center mt-1">
                         {getStatusIcon(selectedAgent.status)}
                         <span className="ml-2 capitalize">{selectedAgent.status}</span>
                       </div>
                     </div>
-                    <div className="bg-muted/30 p-3 rounded-md">
-                      <p className="text-xs text-muted-foreground">Uptime</p>
+                    <div className="bg-muted/30 p-3 rounded-md shadow-sm hover:shadow-md transition-all hover:bg-primary/5">
+                      <p className="text-xs text-primary/70 font-medium">Uptime</p>
                       <p className="mt-1">{selectedAgent.uptime}</p>
                     </div>
-                    <div className="bg-muted/30 p-3 rounded-md">
-                      <p className="text-xs text-muted-foreground">Current Task</p>
+                    <div className="bg-muted/30 p-3 rounded-md shadow-sm hover:shadow-md transition-all hover:bg-primary/5">
+                      <p className="text-xs text-primary/70 font-medium">Current Task</p>
                       <p className="mt-1">{selectedAgent.currentTask || "No task"}</p>
                     </div>
-                    <div className="bg-muted/30 p-3 rounded-md">
-                      <p className="text-xs text-muted-foreground">Performance</p>
+                    <div className="bg-muted/30 p-3 rounded-md shadow-sm hover:shadow-md transition-all hover:bg-primary/5">
+                      <p className="text-xs text-primary/70 font-medium">Performance</p>
                       <p className={`mt-1 ${getPerformanceColor(selectedAgent.performance)}`}>{selectedAgent.performance}%</p>
                     </div>
                   </div>
                 </div>
                 
-                <div>
-                  <h4 className="text-sm font-medium mb-3">Skills</h4>
-                  <div className="space-y-3">
-                    {selectedAgent.skills.map((skill) => (
-                      <div key={skill.name}>
+                <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+                  <h4 className="text-sm font-medium mb-3 flex items-center">
+                    <Star className="h-4 w-4 mr-2 text-primary" />
+                    Skills
+                  </h4>
+                  <div className="space-y-3 p-3 bg-muted/20 rounded-md shadow-sm">
+                    {selectedAgent.skills.map((skill, index) => (
+                      <div key={skill.name} className="animate-fade-in" style={{ animationDelay: `${index * 100 + 300}ms` }}>
                         <div className="flex justify-between mb-1">
                           <span className="text-sm">{skill.name}</span>
-                          <span className="text-sm font-medium">{skill.level}/100</span>
+                          <span className="text-sm font-medium text-primary">{skill.level}/100</span>
                         </div>
-                        <Progress value={skill.level} className="h-1.5" />
+                        <Progress value={skill.level} className="h-1.5 transition-all" />
                       </div>
                     ))}
                   </div>
                 </div>
                 
-                <div>
-                  <h4 className="text-sm font-medium mb-3">Tools</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedAgent.tools.map((tool) => (
+                <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+                  <h4 className="text-sm font-medium mb-3 flex items-center">
+                    <Wrench className="h-4 w-4 mr-2 text-primary" />
+                    Tools
+                  </h4>
+                  <div className="flex flex-wrap gap-2 p-3 bg-muted/20 rounded-md shadow-sm">
+                    {selectedAgent.tools.map((tool, index) => (
                       <span 
                         key={tool} 
-                        className="text-xs bg-muted px-2 py-1 rounded flex items-center"
+                        className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full flex items-center shadow-sm hover:shadow-md transition-all hover:bg-primary/20 animate-fade-in"
+                        style={{ animationDelay: `${index * 100 + 400}ms` }}
                       >
                         <Code className="h-3 w-3 mr-1" />
                         {tool}
@@ -434,11 +454,20 @@ const AgentStatusBoard = () => {
                   </div>
                 </div>
                 
-                <div className="flex justify-between">
-                  <Button variant="outline" size="sm" onClick={() => setSelectedAgent(null)}>
+                <div className="flex justify-between animate-slide-up" style={{ animationDelay: '400ms' }}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setSelectedAgent(null)}
+                    className="transition-all hover:bg-primary/5 hover:border-primary/30"
+                  >
                     Back
                   </Button>
-                  <Button variant="primary" size="sm">
+                  <Button 
+                    variant="primary" 
+                    size="sm"
+                    className="shadow-sm hover:shadow-md transition-all"
+                  >
                     <Star className="h-4 w-4 mr-2" />
                     Rate Performance
                   </Button>
@@ -446,9 +475,9 @@ const AgentStatusBoard = () => {
               </div>
             </DashboardCard>
           ) : (
-            <DashboardCard className="h-full flex items-center justify-center">
-              <div className="text-center p-6">
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <DashboardCard className="h-full flex items-center justify-center shadow-elevation transition-all hover:shadow-card">
+              <div className="text-center p-6 animate-fade-in">
+                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 shadow-sm animate-pulse-slow">
                   <UserCheck className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Select an Agent</h3>
